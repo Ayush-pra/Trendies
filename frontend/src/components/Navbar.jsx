@@ -284,7 +284,7 @@ import { FaCircleUser } from "react-icons/fa6";
 import { HiShoppingCart, HiMenuAlt3 } from "react-icons/hi";
 import { RxCross2 } from "react-icons/rx";
 import { userDataContext } from "../context/UserContext";
-import { authDataContext } from "../context/authContext";
+import { authDataContext } from "../context/AuthContext";
 import { shopDataContext } from "../context/ShopContext";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
