@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+.input {
+  @apply w-full h-12 rounded-md bg-slate-700 px-4 text-white placeholder:text-gray-300 outline-none;
+}
+
+.payment-btn {
+  @apply w-full sm:w-48 h-15 bg-white rounded-md flex flex-col items-center justify-center gap-1
+         font-bold text-black cursor-pointer
+         hover:bg-blue-400 transition;
+}
+
+.payment-btn.active {
+  @apply border-blue-800;
+}
+
+.payment-icon {
+  @apply h-8 object-contain;
+}
+
+.payment-text {
+  @apply text-[20px];
+}
