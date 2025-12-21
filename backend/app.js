@@ -18,7 +18,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 app.use(cors({
-    origin: ["https://trendies-frontend-b7wv.onrender.com", "http://localhost:5174"],
+    origin: ["https://trendies-frontend-b7wv.onrender.com", "https://trendies-admin-o01i.onrender.com"],
     credentials:true
 }))
 
