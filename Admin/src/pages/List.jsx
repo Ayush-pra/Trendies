@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
-import { authDataContext } from '../../context/authContext';
+import { authDataContext } from '../../context/AuthContext';
 import axios from 'axios';
 import { RiDeleteBin6Line } from "react-icons/ri";
 
