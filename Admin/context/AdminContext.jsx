@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { createContext } from 'react';
 import axios from 'axios';
 import { useEffect } from 'react';
-import { authDataContext } from './authContext';
+import { authDataContext } from './AuthContext';
 export const adminDataContext = createContext();
 
 
