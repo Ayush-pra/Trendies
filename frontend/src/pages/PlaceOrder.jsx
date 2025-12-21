@@ -219,7 +219,7 @@ import Title from "../components/Title";
 import CartTotal from "../components/CartTotal";
 import { useNavigate } from "react-router-dom";
 import { shopDataContext } from "../context/ShopContext";
-import { authDataContext } from "../context/authContext";
+import { authDataContext } from "../context/AuthContext";
 import axios from "axios";
 
 const PlaceOrder = () => {
