@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authDataContext } from '../../context/authContext';
+import { authDataContext } from '../../context/AuthContext';
 import { adminDataContext } from '../../context/AdminContext';
 import { toast } from 'react-toastify';
 import Loading from './Loading';
