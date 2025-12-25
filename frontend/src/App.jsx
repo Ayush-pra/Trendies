@@ -14,7 +14,7 @@ import Cart from './pages/Cart';
 import PlaceOrder from './pages/PlaceOrder';
 import Order from './pages/Order';
 import { ToastContainer, toast } from 'react-toastify';
-import VirtualTryOn from "./pages/VirtualTryOn";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   const {userData} = useContext(userDataContext);
@@ -25,7 +25,7 @@ const App = () => {
     <>
     {!hideNavbarPaths.includes(location.pathname) && <Navbar />}
     <ToastContainer position="top-right" autoClose={3000} />
-    <Routes>
+     {/* <Routes>
       <Route path='/' element={<Home/>}/>
       <Route path='/registration' element={<Registration/>}/>
       <Route path='/login' element={<Login/>}/>
@@ -38,7 +38,37 @@ const App = () => {
       <Route path='/placeorder' element={<PlaceOrder/>}/>
       <Route path='/order' element={<Order/>} />
       <Route path="/tryon" element={<VirtualTryOn />} />
-    </Routes>
+    </Routes> */} 
+
+      
+      <Routes>
+        <Route path='/' element={<Home/>}/>
+        <Route path='/registration' element={<Registration/>}/>
+        <Route path='/login' element={<Login/>}/>
+        <Route path='/about' element={<About/>}/>
+        <Route path='/collection' element={<Collection/>}/>
+        <Route path='/product' element={<Product/>}/>
+        <Route path='/contact' element={<Contact/>}/>
+        <Route path='/productdetail/:productId' element={<ProductDetail/>}/>
+      
+        {/* Protected routes */}
+        <Route path='/cart' element={
+          <ProtectedRoute>
+            <Cart />
+          </ProtectedRoute>
+        }/>
+        <Route path='/placeorder' element={
+          <ProtectedRoute>
+            <PlaceOrder />
+          </ProtectedRoute>
+        }/>
+        <Route path='/order' element={
+          <ProtectedRoute>
+            <Order />
+          </ProtectedRoute>
+        }/>
+        <Route path="/tryon" element={<VirtualTryOn />} />
+      </Routes>
     </>
   );
 }
