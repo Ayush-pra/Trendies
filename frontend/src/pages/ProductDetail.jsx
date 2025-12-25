@@ -19,6 +19,7 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [loading, setloading] = useState(false);
     const [addedToCart, setAddedToCart] = useState(false);
+    const { userData } = useContext(userDataContext);
 
     const fetchProductData = async()=>{
         products.map((item)=>{
@@ -39,6 +40,11 @@ const ProductDetail = () => {
     }, [productId, products]);
     
     const handleAddToCart = () => {
+        if (!userData || !userData.token) {
+          toast.info("You must log in to add products to cart");
+          return;
+        }
+        
         if (!size) {
             toast.error("Please select a size before adding to cart.");
             return;
