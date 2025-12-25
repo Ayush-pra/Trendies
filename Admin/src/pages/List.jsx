@@ -1,3 +1,106 @@
+// import React, { useContext, useEffect, useState } from 'react';
+// import Navbar from '../components/Navbar';
+// import Sidebar from '../components/Sidebar';
+// import { authDataContext } from '../../context/AuthContext';
+// import axios from 'axios';
+// import { RiDeleteBin6Line } from "react-icons/ri";
+
+// const List = () => {
+//   const [list, setlist] = useState([]);
+//   const { serverUrl } = useContext(authDataContext);
+
+//   const fetchList = async () => {
+//     try {
+//       const result = await axios.get(serverUrl + "/api/product/list");
+//       setlist(result.data);
+//       console.log(result.data)
+//     }
+//     catch (error) {
+//       console.log(error);
+//     }
+//   }
+
+//   useEffect(() => {
+//     fetchList();
+//   }, [])
+
+//   const removelist = async (id) => {
+//     try {
+//       const result = await axios.post(`${serverUrl}/api/product/remove/${id}`, {}, { withCredentials: true });
+//       if (result.data) {
+//         fetchList();
+//       }
+//       else {
+//         console.log("Failed to remove Product");
+//       }
+//     }
+//     catch (error) {
+//       console.log(error);
+//     }
+//   }
+//   return (
+//     <div className='w-[100vw] min-h-[100vh] bg-gradient-to-l from-[#100f0f] to-[#08161a] text-white'>
+//       <Navbar />
+//       <div className='w-[100%] h-[100%] flex items-center justify-start'>
+//         <Sidebar />
+//         <div className='w-[82%] h-[100%] lg:ml-[320px] md:ml-[230px] mt-[70px] flex flex-col gap-[30px] overflow-x-hidden py-[50px] ml-[100px]'>
+//           <div className="text-[28px] md:text-[40px] mb-[20px] text-white font-semibold">
+//             All Listed Products
+//           </div>
+
+//           <div className="flex flex-col gap-[20px]">
+//             {list?.length > 0 ? (
+//               list.map((item, index) => (
+//                 <div
+//                   key={index}
+//                   className="w-[90%] md:h-[120px] h-[90px] bg-zinc-800 rounded-xl flex items-center justify-between p-[10px] md:px-[30px] gap-[20px]"
+//                 >
+//                   <div className="flex items-center gap-[20px]">
+//                     <img
+//                       src={item.image1?.secure_url || item.image1}
+//                       className="w-[80px] h-[80px] object-cover rounded-lg"
+//                       alt={item.name}
+//                     />
+//                     <div>
+//                       <h2 className="text-lg text-amber-400 font-semibold">{item.name}</h2>
+//                       <p className="text-sm text-green-600">${item.price}</p>
+//                       {item.sizes && item.sizes.length > 0 && (
+//                         <p className="text-sm text-gray-200">
+//                           Sizes: {item.sizes.join(", ")}
+//                         </p>
+//                       )}
+//                       {item.bestseller && (
+//                         <p className="text-sm text-gray-400">
+//                           Bestseller
+//                         </p>
+//                       )}
+//                     </div>
+//                   </div>
+
+//                   <div className="flex items-center justify-center" onClick={() => removelist(item._id)}>
+//                     <span className="p-2 rounded-full hover:bg-red-600 text-white text-xl transition duration-200 ease-in-out shadow-md cursor-pointer">
+//                       <RiDeleteBin6Line />
+//                     </span>
+//                   </div>
+//                 </div>
+
+//               ))
+//             ) : (
+//               <div className="text-white text-lg font-semibold">
+//                 No Products were Listed
+//               </div>
+//             )}
+//           </div>
+
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default List;
+
+
 import React, { useContext, useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
@@ -11,91 +114,124 @@ const List = () => {
 
   const fetchList = async () => {
     try {
-      const result = await axios.get(serverUrl + "/api/product/list");
+      const result = await axios.get(serverUrl + "/api/product/list", {
+        withCredentials: true,
+      });
       setlist(result.data);
-      console.log(result.data)
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchList();
-  }, [])
+  }, []);
 
   const removelist = async (id) => {
     try {
-      const result = await axios.post(`${serverUrl}/api/product/remove/${id}`, {}, { withCredentials: true });
-      if (result.data) {
-        fetchList();
-      }
-      else {
-        console.log("Failed to remove Product");
-      }
-    }
-    catch (error) {
+      const result = await axios.post(
+        `${serverUrl}/api/product/remove/${id}`,
+        {},
+        { withCredentials: true }
+      );
+      if (result.data) fetchList();
+    } catch (error) {
       console.log(error);
     }
-  }
+  };
+
   return (
-    <div className='w-[100vw] min-h-[100vh] bg-gradient-to-l from-[#100f0f] to-[#08161a] text-white'>
+    <div className="w-full min-h-screen bg-gradient-to-l from-[#100f0f] to-[#08161a] text-white">
       <Navbar />
-      <div className='w-[100%] h-[100%] flex items-center justify-start'>
-        <Sidebar />
-        <div className='w-[82%] h-[100%] lg:ml-[320px] md:ml-[230px] mt-[70px] flex flex-col gap-[30px] overflow-x-hidden py-[50px] ml-[100px]'>
-          <div className="text-[28px] md:text-[40px] mb-[20px] text-white font-semibold">
-            All Listed Products
-          </div>
+      <Sidebar />
 
-          <div className="flex flex-col gap-[20px]">
-            {list?.length > 0 ? (
-              list.map((item, index) => (
-                <div
-                  key={index}
-                  className="w-[90%] md:h-[120px] h-[90px] bg-zinc-800 rounded-xl flex items-center justify-between p-[10px] md:px-[30px] gap-[20px]"
-                >
-                  <div className="flex items-center gap-[20px]">
-                    <img
-                      src={item.image1?.secure_url || item.image1}
-                      className="w-[80px] h-[80px] object-cover rounded-lg"
-                      alt={item.name}
-                    />
-                    <div>
-                      <h2 className="text-lg text-amber-400 font-semibold">{item.name}</h2>
-                      <p className="text-sm text-green-600">${item.price}</p>
-                      {item.sizes && item.sizes.length > 0 && (
-                        <p className="text-sm text-gray-200">
-                          Sizes: {item.sizes.join(", ")}
-                        </p>
-                      )}
-                      {item.bestseller && (
-                        <p className="text-sm text-gray-400">
-                          Bestseller
-                        </p>
-                      )}
-                    </div>
-                  </div>
+      {/* MAIN CONTENT */}
+      <div
+        className="
+          pt-[90px]
+          ml-16 sm:ml-20 md:ml-[18%]
+          px-4 sm:px-6 md:px-10
+          flex flex-col gap-8
+        "
+      >
+        <h1 className="text-2xl md:text-4xl font-semibold text-white">
+          All Listed Products
+        </h1>
 
-                  <div className="flex items-center justify-center" onClick={() => removelist(item._id)}>
-                    <span className="p-2 rounded-full hover:bg-red-600 text-white text-xl transition duration-200 ease-in-out shadow-md cursor-pointer">
-                      <RiDeleteBin6Line />
-                    </span>
+        <div className="flex flex-col gap-4">
+          {list?.length > 0 ? (
+            list.map((item, index) => (
+              <div
+                key={index}
+                className="
+                  w-full
+                  bg-zinc-800
+                  rounded-xl
+                  flex flex-col sm:flex-row
+                  items-start sm:items-center
+                  justify-between
+                  gap-4
+                  p-4 sm:px-6
+                "
+              >
+                {/* LEFT */}
+                <div className="flex items-start sm:items-center gap-4">
+                  <img
+                    src={item.image1?.secure_url || item.image1}
+                    className="w-20 h-20 object-cover rounded-lg"
+                    alt={item.name}
+                  />
+
+                  <div className="flex flex-col gap-1">
+                    <h2 className="text-lg font-semibold text-amber-400">
+                      {item.name}
+                    </h2>
+
+                    <p className="text-sm text-green-500 font-medium">
+                      ${item.price}
+                    </p>
+
+                    {item.sizes?.length > 0 && (
+                      <p className="text-sm text-gray-200">
+                        Sizes: {item.sizes.join(", ")}
+                      </p>
+                    )}
+
+                    {item.bestseller && (
+                      <span className="text-xs text-blue-400 font-semibold">
+                        Bestseller
+                      </span>
+                    )}
                   </div>
                 </div>
 
-              ))
-            ) : (
-              <div className="text-white text-lg font-semibold">
-                No Products were Listed
+                {/* DELETE BUTTON */}
+                <button
+                  onClick={() => removelist(item._id)}
+                  className="
+                    self-end sm:self-center
+                    p-3
+                    rounded-full
+                    hover:bg-red-600
+                    transition
+                    duration-200
+                    shadow-md
+                    cursor-pointer
+                  "
+                >
+                  <RiDeleteBin6Line className="text-xl text-white" />
+                </button>
               </div>
-            )}
-          </div>
-
+            ))
+          ) : (
+            <div className="text-lg font-semibold text-white">
+              No Products were Listed
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default List;
