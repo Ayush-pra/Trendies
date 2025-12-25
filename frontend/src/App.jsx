@@ -25,7 +25,7 @@ const App = () => {
     <>
     {!hideNavbarPaths.includes(location.pathname) && <Navbar />}
     <ToastContainer position="top-right" autoClose={3000} />
-     {/* <Routes>
+   <Routes>
       <Route path='/' element={<Home/>}/>
       <Route path='/registration' element={<Registration/>}/>
       <Route path='/login' element={<Login/>}/>
@@ -38,10 +38,10 @@ const App = () => {
       <Route path='/placeorder' element={<PlaceOrder/>}/>
       <Route path='/order' element={<Order/>} />
       <Route path="/tryon" element={<VirtualTryOn />} />
-    </Routes> */} 
+    </Routes> 
 
       
-      <Routes>
+      {/* <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/registration' element={<Registration/>}/>
         <Route path='/login' element={<Login/>}/>
@@ -67,7 +67,7 @@ const App = () => {
             <Order />
           </ProtectedRoute>
         }/>
-      </Routes>
+      </Routes> */}
     </>
   );
 }
