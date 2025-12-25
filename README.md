@@ -68,11 +68,9 @@ It provides a seamless shopping experience for users and a powerful admin dashbo
 
 ## 📁 Project Structure
 trendies/
-│
 ├── frontend/ # User-facing UI (React)
 ├── Admin/ # Admin dashboard (React)
-├── backend/ # Server-side API (Node + Express)
-
+└── backend/ # Server-side API (Node + Express)
 
 ---
 
