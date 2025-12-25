@@ -40,8 +40,8 @@ const App = () => {
       <Route path="/tryon" element={<VirtualTryOn />} />
     </Routes> 
 
-      
-      {/* <Routes>
+      {/* 
+       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/registration' element={<Registration/>}/>
         <Route path='/login' element={<Login/>}/>
@@ -52,7 +52,7 @@ const App = () => {
         <Route path='/productdetail/:productId' element={<ProductDetail/>}/>
       
         {/* Protected routes */}
-        <Route path='/cart' element={
+         <Route path='/cart' element={
           <ProtectedRoute>
             <Cart />
           </ProtectedRoute>
@@ -66,8 +66,8 @@ const App = () => {
           <ProtectedRoute>
             <Order />
           </ProtectedRoute>
-        }/>
-      </Routes> */}
+        }/> */}
+      </Routes>  */}
     </>
   );
 }
