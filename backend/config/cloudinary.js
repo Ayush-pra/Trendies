@@ -1,3 +1,4 @@
+// cloudinary.js
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
@@ -20,6 +21,7 @@ const uploadOnCloudinary = (buffer) => {
 };
 
 module.exports = uploadOnCloudinary;
+
 
 
 
