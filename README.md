@@ -99,8 +99,8 @@ npm install
 nodemon ./app.js
 
 🔐 Environment Variables needed for User frontend
-VITE_FIREBASE_API_KEY = your_firebase_api_key
-VITE_RAZORPAY_KEY_ID = your_razorpay_key_id
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_RAZORPAY_KEY_ID=your_razorpay_key_id
 
 🔐 Environment Variables needed for backend
 MONGO_URI=your_mongodb_connection_string
