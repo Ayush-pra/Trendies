@@ -25,7 +25,10 @@ const Registration = () => {
             console.log(result.data);
         }
         catch{
-            console.log("signup error");
+            catch (error) {
+              console.log("signup error:", error.response?.data);
+              alert(error.response?.data?.message);
+            };
         }
     }
 
