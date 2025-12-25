@@ -1,28 +1,53 @@
 const cloudinary = require("cloudinary").v2;
-const fs = require("fs");
 
-const uploadOnCloudinary = async (filePath) => {
-     cloudinary.config({ 
-        cloud_name: process.env.CLOUDINARY_NAME, 
-        api_key: process.env.CLOUDINARY_API_KEY, 
-        api_secret: process.env.CLOUDINARY_API_SECRET 
-    });
-    try{
-        if(!filePath){
-            return null;
-        }
-        const uploadResult = await cloudinary.uploader
-           .upload(filePath)
-        fs.unlinkSync(filePath)
-        return uploadResult.secure_url
-    }
-    catch{
-        fs.unlinkSync(filePath)
-        console.log("cloudinary error")
-    }
-}
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const uploadOnCloudinary = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "trendies-products" },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    stream.end(buffer);
+  });
+};
 
 module.exports = uploadOnCloudinary;
+
+
+
+// const cloudinary = require("cloudinary").v2;
+// const fs = require("fs");
+
+// const uploadOnCloudinary = async (filePath) => {
+//      cloudinary.config({ 
+//         cloud_name: process.env.CLOUDINARY_NAME, 
+//         api_key: process.env.CLOUDINARY_API_KEY, 
+//         api_secret: process.env.CLOUDINARY_API_SECRET 
+//     });
+//     try{
+//         if(!filePath){
+//             return null;
+//         }
+//         const uploadResult = await cloudinary.uploader
+//            .upload(filePath)
+//         fs.unlinkSync(filePath)
+//         return uploadResult.secure_url
+//     }
+//     catch{
+//         fs.unlinkSync(filePath)
+//         console.log("cloudinary error")
+//     }
+// }
+
+// module.exports = uploadOnCloudinary;
 
 // const cloudinary = require("cloudinary").v2;
 // const fs = require("fs");
