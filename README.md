@@ -7,9 +7,7 @@ It provides a seamless shopping experience for users and a powerful admin dashbo
 
 ## 🌐 Live Demo
 🔗 **Frontend (User):** https://trendies-frontend-b7wv.onrender.com   
-🔗 **Admin Panel:** https://trendies-admin-o01i.onrender.com  
-
-> *(Best viewed on desktop for full admin features)*
+🔗 **Admin Panel:** Admin Credentials Available on request(https://trendies-admin-o01i.onrender.com/)  
 
 ---
 
