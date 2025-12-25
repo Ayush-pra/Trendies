@@ -5,6 +5,7 @@ import { FaStar, FaHeart, FaShare, FaTruck, FaUndo, FaShieldAlt, FaShoppingCart,
 import RelatedProduct from '../components/RelatedProduct';
 import { toast } from 'react-toastify';
 import Loading from '../components/Loading';
+import { userDataContext } from './UserContext';
 
 const ProductDetail = () => {
     const {productId} = useParams();
