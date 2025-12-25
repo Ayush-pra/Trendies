@@ -41,10 +41,10 @@ const ProductDetail = () => {
     }, [productId, products]);
     
     const handleAddToCart = () => {
-        if (!userData || !userData.token) {
-          toast.info("You must log in to add products to cart");
-          return;
-        }
+        // if (!userData || !userData.token) {
+        //   toast.info("You must log in to add products to cart");
+        //   return;
+        // }
         
         if (!size) {
             toast.error("Please select a size before adding to cart.");
