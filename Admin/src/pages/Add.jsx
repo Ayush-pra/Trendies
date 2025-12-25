@@ -7,10 +7,10 @@ import { toast } from 'react-toastify';
 import Loading from '../components/Loading';
 
 const Add = () => {
-  const [image1, setimage1] = useState(false);
-  const [image2, setimage2] = useState(false);
-  const [image3, setimage3] = useState(false);
-  const [image4, setimage4] = useState(false);
+  const [image1, setimage1] = useState(null);
+  const [image2, setimage2] = useState(null);
+  const [image3, setimage3] = useState(null);
+  const [image4, setimage4] = useState(null);
   const [name, setname] = useState("");
   const [description, setdescription] = useState("");
   const [category, setcategory] = useState("Men");
@@ -34,10 +34,10 @@ const Add = () => {
         formData.append("subCategory", SubCategory);
         formData.append("bestseller", bestseller);
         formData.append("sizes", JSON.stringify(sizes));
-        formData.append("image1", image1);
-        formData.append("image2", image2);
-        formData.append("image3", image3);
-        formData.append("image4", image4);
+        if(image1) formData.append("image1", image1);
+        if(image2) formData.append("image2", image2);
+        if(image3) formData.append("image3", image3);
+        if(image4) formData.append("image4", image4);
         
         const result = await axios.post(serverUrl + "/api/product/addproduct" , formData, {withCredentials:true});
         console.log(result.data);
@@ -46,10 +46,10 @@ const Add = () => {
         if(result.data){
           setname("");
           setdescription("");
-          setimage1(false);
-          setimage2(false);
-          setimage3(false);
-          setimage4(false);
+          setimage1(null);
+          setimage2(null);
+          setimage3(null);
+          setimage4(null);
           setprice("");
           setbestseller(false);
           setcategory("Men");
