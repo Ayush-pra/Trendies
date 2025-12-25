@@ -24,12 +24,10 @@ const Registration = () => {
             navigate("/");
             console.log(result.data);
         }
-        catch{
-            catch (error) {
-              console.log("signup error:", error.response?.data);
-              alert(error.response?.data?.message);
-            };
-        }
+        catch (error) {
+          console.log("signup error:", error.response?.data);
+          alert(error.response?.data?.message);
+        };
     }
 
     const googleSignup = async ()=>{
