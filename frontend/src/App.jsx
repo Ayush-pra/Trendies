@@ -67,7 +67,6 @@ const App = () => {
             <Order />
           </ProtectedRoute>
         }/>
-        <Route path="/tryon" element={<VirtualTryOn />} />
       </Routes>
     </>
   );
