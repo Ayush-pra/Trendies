@@ -14,7 +14,7 @@ import Cart from './pages/Cart';
 import PlaceOrder from './pages/PlaceOrder';
 import Order from './pages/Order';
 import { ToastContainer, toast } from 'react-toastify';
-import ProtectedRoute from "./components/ProtectedRoute";
+
 
 const App = () => {
   const {userData} = useContext(userDataContext);
@@ -40,34 +40,6 @@ const App = () => {
       <Route path="/tryon" element={<VirtualTryOn />} />
     </Routes> 
 
-      {/* 
-       <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/registration' element={<Registration/>}/>
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/about' element={<About/>}/>
-        <Route path='/collection' element={<Collection/>}/>
-        <Route path='/product' element={<Product/>}/>
-        <Route path='/contact' element={<Contact/>}/>
-        <Route path='/productdetail/:productId' element={<ProductDetail/>}/>
-      
-        {/* Protected routes */}
-         <Route path='/cart' element={
-          <ProtectedRoute>
-            <Cart />
-          </ProtectedRoute>
-        }/>
-        <Route path='/placeorder' element={
-          <ProtectedRoute>
-            <PlaceOrder />
-          </ProtectedRoute>
-        }/>
-        <Route path='/order' element={
-          <ProtectedRoute>
-            <Order />
-          </ProtectedRoute>
-        }/> */}
-      </Routes>  */}
     </>
   );
 }
