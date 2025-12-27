@@ -7,19 +7,19 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { RiDeleteBin6Line } from "react-icons/ri";
 import CartTotal from '../components/CartTotal';
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 
 const Cart = () => {
     const {products, currency, cartItem, updateQuantity} = useContext(shopDataContext);
     const [cartData, setcartData] = useState([]);
     const navigate = useNavigate();
 
-     useEffect(() => {
-        const token = Cookies.get("token");
-        if (!token) {
-            navigate("/login");
-        }
-    }, []);
+    //  useEffect(() => {
+    //     const token = Cookies.get("token");
+    //     if (!token) {
+    //         navigate("/login");
+    //     }
+    // }, []);
     
     useEffect(()=>{
         const tempData = [];
