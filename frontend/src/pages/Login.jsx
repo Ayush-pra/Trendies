@@ -37,7 +37,7 @@ const Login = () => {
       const handleSignin = async (e) => {
           e.preventDefault();
           try {
-            setLoading(true);
+            setloading(true);
       
             await axios.post(
               `${serverUrl}/api/auth/login`,
@@ -52,7 +52,7 @@ const Login = () => {
             console.log(error);
             toast.error("Login failed");
           } finally {
-            setLoading(false);
+            setloading(false);
           }
         };
   
