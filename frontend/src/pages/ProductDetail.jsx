@@ -6,8 +6,6 @@ import RelatedProduct from '../components/RelatedProduct';
 import { toast } from 'react-toastify';
 import Loading from '../components/Loading';
 import { userDataContext } from '../context/UserContext';
-import Cookies from "js-cookie";
-import { useNavigate } from 'react-router-dom';
 
 const ProductDetail = () => {
     const {productId} = useParams();
@@ -23,7 +21,6 @@ const ProductDetail = () => {
     const [loading, setloading] = useState(false);
     const [addedToCart, setAddedToCart] = useState(false);
     const { userData } = useContext(userDataContext);
-    const navigate = useNavigate();
 
     const fetchProductData = async()=>{
         products.map((item)=>{
@@ -38,13 +35,6 @@ const ProductDetail = () => {
             }
         })
     }
-
-    useEffect(() => {
-        const token = Cookies.get("token");
-        if (!token) {
-            navigate("/login");
-        }
-    }, []);
     
     useEffect(()=>{
         fetchProductData()
