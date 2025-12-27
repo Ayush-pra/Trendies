@@ -14,6 +14,12 @@ const Cart = () => {
     const [cartData, setcartData] = useState([]);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const user = localStorage.getItem("user");
+        if (!user) {
+            navigate("/login");
+        }
+    }, []);
     //  useEffect(() => {
     //     const token = Cookies.get("token");
     //     if (!token) {
