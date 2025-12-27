@@ -13,6 +13,13 @@ const Cart = () => {
     const {products, currency, cartItem, updateQuantity} = useContext(shopDataContext);
     const [cartData, setcartData] = useState([]);
     const navigate = useNavigate();
+
+     useEffect(() => {
+        const token = Cookies.get("token");
+        if (!token) {
+            navigate("/login");
+        }
+    }, []);
     
     useEffect(()=>{
         const tempData = [];
