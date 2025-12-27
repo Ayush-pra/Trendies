@@ -306,6 +306,11 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       setloading(true);
+
+localStorage.removeItem("user");
+      navigate("/");
+
+            
       await axios.get(serverUrl + "/api/auth/logout", {
         withCredentials: true,
       });
