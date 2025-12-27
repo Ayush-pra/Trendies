@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { RiDeleteBin6Line } from "react-icons/ri";
 import CartTotal from '../components/CartTotal';
-
+import Cookies from "js-cookie";
 
 const Cart = () => {
     const {products, currency, cartItem, updateQuantity} = useContext(shopDataContext);
