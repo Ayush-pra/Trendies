@@ -21,6 +21,8 @@ const Registration = () => {
             }, {withCredentials:true});
             // getCurrentUser();
             await getCurrentUser();
+            const userData = result.data.name;
+            localStorage.setItem("user", JSON.stringify(userData));
             navigate("/");
             console.log(result.data);
         }
@@ -40,6 +42,8 @@ const Registration = () => {
             const result = await axios.post(serverUrl + "/api/auth/googlelogin", {
                 name,email
             }, {withCredentials:true});
+            const userData = result.data.name;
+            localStorage.setItem("user", JSON.stringify(userData));
             navigate("/");
             console.log(result.data);
         }
