@@ -39,13 +39,15 @@ const Login = () => {
           try {
             setloading(true);
       
-            await axios.post(
+            const result = await axios.post(
               `${serverUrl}/api/auth/login`,
               { email, password },
               { withCredentials: true }
             );
       
             await getCurrentUser();
+            const userData = result.data.name;
+            localStorage.setItem("user", JSON.stringify(userData));
             toast.success("Login successful");
             navigate("/");
           } catch (error) {
@@ -69,6 +71,8 @@ const Login = () => {
             }, {withCredentials:true});
             setUserData({ name, email });
             await getCurrentUser();
+           const userData = result.data.name;
+            localStorage.setItem("user", JSON.stringify(userData));
             setloading(false);
             navigate("/");
             toast.success("Login Successfully");
