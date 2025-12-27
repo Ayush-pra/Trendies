@@ -6,8 +6,8 @@ import RelatedProduct from '../components/RelatedProduct';
 import { toast } from 'react-toastify';
 import Loading from '../components/Loading';
 import { userDataContext } from '../context/UserContext';
-import Cookies from "js-cookie";
-import { useNavigate } from 'react-router-dom';
+// import Cookies from "js-cookie";
+// import { useNavigate } from 'react-router-dom';
 
 const ProductDetail = () => {
     const {productId} = useParams();
@@ -39,12 +39,12 @@ const ProductDetail = () => {
         })
     }
 
-    useEffect(() => {
-        const token = Cookies.get("token");
-        if (!token) {
-            navigate("/login");
-        }
-    }, []);
+    // useEffect(() => {
+    //     const token = Cookies.get("token");
+    //     if (!token) {
+    //         navigate("/login");
+    //     }
+    // }, []);
     
     useEffect(()=>{
         fetchProductData()
