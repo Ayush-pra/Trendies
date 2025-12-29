@@ -43,16 +43,14 @@ const Login = () => {
                     <h1 className='text-[24px] font-sans'>Trendies</h1>
                 </div>
 
-                {/* Title */}
                 <div className='w-[100%] h-[100px] flex items-center justify-center flex-col gap-[10px]'>
                     <p className='inline-block text-[25px] font-semibold mb-0'>Sign in Here</p>
                     <p className='inline-block text-[15px]'>Welcome to Trendies, Applt to Admin Login</p>
                 </div>
 
-                {/* Form Box */}
                 <div className='max-w-[500px] w-[90%] h-[400px] bg-[#00000025] border-[1px] border-[#96969635] backdrop:blur-2xl rounded-lg shadow-lg flex pt-15 items-start justify-center'>
                     <form onSubmit={AdminLogin} action="" className="w-[90%] max-w-[600px] flex flex-col items-center gap-5 mt-5">
-                        {/* Email Input */}
+                 
                         <input
                             type="email"
                             placeholder="Email Address"
@@ -62,7 +60,6 @@ const Login = () => {
                             required
                         />
 
-                        {/* Password Input */}
                         <input
                             type="password"
                             placeholder="Password"
@@ -72,7 +69,6 @@ const Login = () => {
                             required
                         />
 
-                        {/* Submit Button */}
                         <button
                             type="submit"
                             className="w-full h-[50px] bg-purple-600 rounded-lg flex items-center justify-center gap-2 cursor-pointer 
