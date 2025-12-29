@@ -41,17 +41,14 @@ const updateCart = async (req, res) => {
     const cartData = userData.cartData || {};
 
     if (quantity === 0) {
-      // 🗑 delete item size
       if (cartData[itemId] && cartData[itemId][size]) {
         delete cartData[itemId][size];
 
-        // If that product has no more sizes, remove the whole product
         if (Object.keys(cartData[itemId]).length === 0) {
           delete cartData[itemId];
         }
       }
     } else {
-      // update quantity
       if (!cartData[itemId]) {
         cartData[itemId] = {};
       }
@@ -65,19 +62,6 @@ const updateCart = async (req, res) => {
     return res.status(500).json({ message: "updateCart Error" });
   }
 };
-
-
-// const getUserCart = async (req, res) => {
-//     try{
-//         const userData = await User.findById(req.userId);
-//         const cartData = await userData.cartData;
-//         return res.status(200).json(cartData);
-//     }
-//     catch(error){
-//         console.log(error);
-//         return res.status(500).json({message:"getgUserCart Error"});
-//     }
-// }
 
 const getUserCart = async (req, res) => {
   try {
