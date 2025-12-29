@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const isAuth = (req, res, next) => {
   try {
-    const token = req.cookies.token; // ✅ extract only "token"
+    const token = req.cookies.token; 
     if (!token) {
       return res.status(400).json({ message: "User not found" });
     }
@@ -12,7 +12,7 @@ const isAuth = (req, res, next) => {
       return res.status(400).json({ message: "Invalid token" });
     }
 
-    req.userId = tokenVerify.userId; // ✅ attach userId to request
+    req.userId = tokenVerify.userId; 
     next();
   } catch (error) {
     console.log("isAuth Error:", error.message);
