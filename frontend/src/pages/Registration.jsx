@@ -55,7 +55,7 @@ const Registration = () => {
     return (
         <>
             <div className='w-[100vw] h-[100vh] bg-gradient-to-l from-[#141414] to-[#0c2025] text-white flex flex-col items-center justify-start'>
-                {/* Header */}
+
                 <div 
                     className='w-[100%] h-[80px] flex items-center justify-start px-[30px] gap-[10px] cursor-pointer' 
                     onClick={() => { navigate("/") }}
@@ -64,16 +64,14 @@ const Registration = () => {
                     <h1 className='text-[24px] font-sans'>Trendies</h1>
                 </div>
 
-                {/* Title */}
                 <div className='w-[100%] h-[100px] flex items-center justify-center flex-col gap-[10px]'>
                     <p className='inline-block text-[25px] font-semibold mb-0'>Register Here</p>
                     <p className='inline-block text-[15px]'>Welcome to Trendies, Place Your Orders</p>
                 </div>
 
-                {/* Form Box */}
                 <div className='max-w-[600px] w-[90%] h-[500px] bg-[#00000025] border-[1px] border-[#96969635] backdrop:blur-2xl rounded-lg shadow-lg flex items-center justify-center'>
                     <form onSubmit={handleSignup} action="" className="w-[90%] max-w-[600px] flex flex-col items-center gap-5 mt-5">
-                        {/* Name Input */}
+                    
                         <input
                             type="text"
                             placeholder="Full Name"
@@ -83,7 +81,6 @@ const Registration = () => {
                             required
                         />
 
-                        {/* Email Input */}
                         <input
                             type="email"
                             placeholder="Email Address"
@@ -93,7 +90,6 @@ const Registration = () => {
                             required
                         />
 
-                        {/* Password Input */}
                         <input
                             type="password"
                             placeholder="Password"
@@ -103,7 +99,6 @@ const Registration = () => {
                             required
                         />
 
-                        {/* Submit Button */}
                         <button
                             type="submit"
                             className="w-full h-[50px] bg-purple-600 rounded-lg flex items-center justify-center gap-2 cursor-pointer 
@@ -112,14 +107,12 @@ const Registration = () => {
                             Create Account
                         </button>
 
-                        {/* Divider */}
                         <div className="flex items-center w-full gap-2">
                             <hr className="flex-grow border-gray-600" />
                             <span className="text-gray-400 text-sm">OR</span>
                             <hr className="flex-grow border-gray-600" />
                         </div>
 
-                        {/* Google Sign Up */}
                         <div 
                             className="w-full h-[50px] bg-white text-black rounded-lg flex items-center justify-center gap-2 cursor-pointer 
                                 shadow-md hover:shadow-xl transition-all duration-300 ease-in-out hover:bg-blue-800"
@@ -129,7 +122,6 @@ const Registration = () => {
                             <span className="font-medium tracking-wide">Sign in with Google</span>
                         </div>
 
-                        {/* Sign In Redirect */}
                         <p className='text-sm text-gray-300'>
                             Already have an Account?{" "}
                             <span 
