@@ -34,7 +34,6 @@ const VirtualTryOn = () => {
                     Virtual Try-On
                 </h1>
 
-                {/* Upload Person Image */}
                 <label className="block text-gray-700 font-medium mb-2">Your Photo</label>
                 <input
                     type="file"
@@ -43,7 +42,6 @@ const VirtualTryOn = () => {
                     className="w-full mb-4 border rounded-lg p-2"
                 />
 
-                {/* Upload Cloth Image */}
                 <label className="block text-gray-700 font-medium mb-2">Garment Image</label>
                 <input
                     type="file"
@@ -59,7 +57,6 @@ const VirtualTryOn = () => {
                     Try Now
                 </button>
 
-                {/* Preview Generated Image */}
                 {resultImage && (
                     <div className="mt-6 text-center">
                         <h3 className="text-lg font-semibold text-gray-800 mb-2">Result</h3>
