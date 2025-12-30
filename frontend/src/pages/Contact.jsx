@@ -6,12 +6,7 @@ import Title from '../components/Title'; // Imported the reusable title componen
 const ContactUs = () => {
   return (
     <div className='w-full min-h-screen bg-gradient-to-l from-[#141414] to-[#0c2025] pt-[73px]'>
-      {/* Header/Nav would go here */}
-
-      {/* Main Content Area */}
       <div className='max-w-6xl mx-auto py-16 px-6 lg:px-8'>
-
-        {/* Title Section (Using the Title Component) */}
         <div className='text-center mb-12'>
           <div className='flex justify-center'>
             <Title text1="Get In" text2="Touch" />
@@ -22,9 +17,7 @@ const ContactUs = () => {
         </div>
 
         <div className='grid lg:grid-cols-3 gap-10'>
-          {/* Contact Form (2/3 width on large screens) */}
           <div className='lg:col-span-2 p-8 rounded-xl bg-[#141414] shadow-2xl border border-[#0c2025]'>
-            {/* Standard H2, maintaining the gradient look */}
             <h2 className='text-3xl font-bold mb-6 bg-gradient-to-r from-orange-300 to-amber-400 bg-clip-text text-transparent'>
               Send Us a Message
             </h2>
@@ -57,8 +50,6 @@ const ContactUs = () => {
               </button>
             </form>
           </div>
-
-          {/* Contact Details (1/3 width on large screens) */}
           <div className='lg:col-span-1 space-y-8 p-8 rounded-xl bg-[#141414] shadow-xl border border-[#0c2025] h-fit'>
             {/* Standard H2, maintaining the primary accent color */}
             <h2 className='text-3xl font-bold mb-4 text-[#88d9ee]'>
