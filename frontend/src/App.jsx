@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext,useState, useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import Registration from './pages/Registration';
 import Home from './pages/Home';
@@ -14,11 +14,26 @@ import Cart from './pages/Cart';
 import PlaceOrder from './pages/PlaceOrder';
 import Order from './pages/Order';
 import { ToastContainer, toast } from 'react-toastify';
-
+import SplashScreen from './components/SplashScreen';
 
 const App = () => {
   const {userData} = useContext(userDataContext);
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
+
+  useEffect(() => {
+
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000); 
+
+    return () => clearTimeout(timer);
+
+  }, []);
+
+  if (loading) {
+    return <SplashScreen />;
+  }
 
   const hideNavbarPaths = ["/login", "/registration"];
   return (
