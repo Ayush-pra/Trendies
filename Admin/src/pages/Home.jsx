@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 const Home = () => {
   const [totalProduct, settotalProduct] = useState(0)
   const [totalOrders, settotalOrders] = useState(0)
+  // const [loading, setLoading] = useState(true);
   const { serverUrl } = useContext(authDataContext);
 
   const fetchCounts = async () => {

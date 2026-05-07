@@ -1,0 +1,51 @@
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: black;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 99999;
+
+  transition: transform 1s ease;
+}
+
+.preloader.hide {
+  transform: translateY(-100%);
+}
+
+.preloader svg {
+  transform: scale(1.5);
+}
+
+.preloader path {
+  fill: rgb(60, 60, 60);
+
+  stroke: white;
+  stroke-width: 1px;
+
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+
+  animation: textAnimation 2s ease-in-out forwards;
+}
+
+@keyframes textAnimation {
+  0% {
+    stroke-dashoffset: 200;
+  }
+
+  90% {
+    fill: transparent;
+  }
+
+  100% {
+    fill: white;
+    stroke-dashoffset: 0;
+  }
+}

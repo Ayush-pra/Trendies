@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { authDataContext } from "../context/AuthContext";
 import { useParams } from 'react-router-dom'
 import { shopDataContext } from '../context/ShopContext';
 import { FaStar, FaHeart, FaShare, FaTruck, FaUndo, FaShieldAlt, FaShoppingCart, FaCheck } from "react-icons/fa";
@@ -7,8 +8,10 @@ import { toast } from 'react-toastify';
 import Loading from '../components/Loading';
 import { userDataContext } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 const ProductDetail = () => {
     const {productId} = useParams();
+    const { serverUrl } = useContext(authDataContext);
     const {products, currency, AddtoCart} = useContext(shopDataContext);
     const [productData, setproductData] = useState(false);
     const [image, setimage] = useState('');
@@ -22,20 +25,38 @@ const ProductDetail = () => {
     const [addedToCart, setAddedToCart] = useState(false);
     const { userData } = useContext(userDataContext);
     const navigate = useNavigate();
-    const fetchProductData = async()=>{
-        products.map((item)=>{
-            if(item._id===productId){
-                setproductData(item);
-                setimage1(item.image1)
-                setimage2(item.image2)
-                setimage3(item.image3)
-                setimage4(item.image4)
-                setimage(item.image1)
-                return null;
-            }
-        })
-    }
+    // const fetchProductData = async()=>{
+    //     products.map((item)=>{
+    //         if(item._id===productId){
+    //             setproductData(item);
+    //             setimage1(item.image1)
+    //             setimage2(item.image2)
+    //             setimage3(item.image3)
+    //             setimage4(item.image4)
+    //             setimage(item.image1)
+    //             return null;
+    //         }
+    //     })
+    // }
 
+    const fetchProductData = async () => {
+    try {
+        // Fetch only the specific product from the new Detail API
+        const response = await axios.get(serverUrl + `/api/product/single/${productId}`);
+        if (response.data.success) {
+            const item = response.data.product;
+            setproductData(item);
+            setimage(item.image1);
+            // Use optional chaining or defaults to prevent "undefined" crashes
+            setimage1(item.image1 || "");
+            setimage2(item.image2 || "");
+            setimage3(item.image3 || "");
+            setimage4(item.image4 || "");
+        }
+    } catch (error) {
+        console.error("Error fetching product detail:", error);
+    }
+};
     
    useEffect(() => {
         const user = localStorage.getItem("user");

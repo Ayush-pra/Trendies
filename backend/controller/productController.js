@@ -12,7 +12,6 @@ const addProduct = async (req, res) => {
     if (!req.files || !req.files.image1) {
       return res.status(400).json({ message: "At least one image is required" });
     }
-
     const uploadImage = async (imgArray) => {
       if (!imgArray || !imgArray[0]) return null;
       return await uploadOnCloudinary(imgArray[0].buffer);
@@ -46,13 +45,46 @@ const addProduct = async (req, res) => {
   }
 };
 
+// const listproduct = async (req, res) => {
+//   try {
+//     const products = await Product.find({});
+//     return res.status(200).json(products);
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ message: "List product failed" });
+//   }
+// };
+
 const listproduct = async (req, res) => {
   try {
-    const products = await Product.find({});
+    const products = await Product.find({})
+      .select('name price image1 image2 image3 image4 category bestseller') 
+      .lean(); 
+
     return res.status(200).json(products);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "List product failed" });
+  }
+};
+
+const getSingleProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    
+    // Fetch the full document without restrictions
+    const product = await Product.findById(productId)
+    .select('-__v -createdAt -updatedAt')
+    .lean(); 
+    
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    res.json({ success: true, product });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -77,6 +109,7 @@ module.exports = {
   addProduct,
   removeproduct,
   listproduct,
+  getSingleProduct
 };
 
 
