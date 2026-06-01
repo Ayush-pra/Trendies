@@ -19,25 +19,27 @@ import SplashScreen from './components/SplashScreen';
 const App = () => {
   const {userData} = useContext(userDataContext);
   const [loading, setLoading] = useState(true);
+  // const [showSplash, setShowSplash] = useState(true);
   const location = useLocation();
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 3000); 
+  //   const timer = setTimeout(() => {
+  //     setLoading(false);
+  //   }, 3000); 
 
-    return () => clearTimeout(timer);
+  //   return () => clearTimeout(timer);
 
-  }, []);
+  // }, []);
 
-  if (loading) {
-    return <SplashScreen />;
-  }
+  // if (loading) {
+  //   return <SplashScreen />;
+  // }
 
   const hideNavbarPaths = ["/login", "/registration"];
   return (
     <>
+    <SplashScreen/>
     {!hideNavbarPaths.includes(location.pathname) && <Navbar />}
     <ToastContainer position="top-right" autoClose={3000} />
    <Routes>
@@ -53,7 +55,6 @@ const App = () => {
       <Route path='/placeorder' element={<PlaceOrder/>}/>
       <Route path='/order' element={<Order/>} />
     </Routes> 
-
     </>
   );
 }

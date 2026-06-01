@@ -27,25 +27,57 @@
   fill: rgb(60, 60, 60);
 
   stroke: white;
-  stroke-width: 1px;
+  stroke-width: 1.2px;
 
   stroke-dasharray: 200;
   stroke-dashoffset: 200;
 
-  animation: textAnimation 2s ease-in-out forwards;
+  animation: textAnimation 3s cubic-bezier(0.9, 0, 0.9, 1) forwards;
 }
 
 @keyframes textAnimation {
   0% {
+    fill: #1A1C1F;
     stroke-dashoffset: 200;
+    stroke-opacity: 1;
   }
-
-  90% {
-    fill: transparent;
+  40% {
+    fill: #1A1C1F;
+    stroke-dashoffset: 0;
+    stroke-opacity: 1;
   }
-
+  80% {
+    fill: #1A1C1F;
+    stroke-dashoffset: -200;
+    stroke-opacity: 1;
+  }
   100% {
     fill: white;
-    stroke-dashoffset: 0;
+    stroke-opacity: 0;
+    stroke-dashoffset: -200;
+  }
+}
+
+.svg-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+}
+
+.svg-text{
+    width:250.2899932861328px;
+    height:47.0099983215332px;
+}
+
+@media screen and (max-width: 768px) {
+  .preloader svg {
+    transform: scale(1);
+  }
+  .svg-logo{
+    gap: 20px;
+  }
+  .preloader path{
+    stroke-width: 1.2;
   }
 }
