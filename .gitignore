@@ -11,3 +11,5 @@ yarn-debug.log*
 # Ignore build files
 dist/
 build/
+
+Chat.md
