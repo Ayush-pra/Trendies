@@ -15,6 +15,7 @@ import PlaceOrder from './pages/PlaceOrder';
 import Order from './pages/Order';
 import { ToastContainer, toast } from 'react-toastify';
 import SplashScreen from './components/SplashScreen';
+import Chatbot from './components/Chatbot';
 
 const App = () => {
   const {userData} = useContext(userDataContext);
@@ -55,6 +56,7 @@ const App = () => {
       <Route path='/placeorder' element={<PlaceOrder/>}/>
       <Route path='/order' element={<Order/>} />
     </Routes> 
+    {!hideNavbarPaths.includes(location.pathname) && <Chatbot />}
     </>
   );
 }

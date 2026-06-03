@@ -13,7 +13,7 @@ const ShopContext = ({children}) => {
     const {serverUrl} = useContext(authDataContext);
     const [cartItem, setcartItem] = useState({});
     const {userData} = useContext(userDataContext);
-    const currency="$";
+    const currency="₹";
     const delivery_fee=5;
     const getProducts = async()=>{
         try{
