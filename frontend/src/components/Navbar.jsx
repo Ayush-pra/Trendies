@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { IoSearchSharp, IoLogOutOutline } from "react-icons/io5";
 import { FaCircleUser } from "react-icons/fa6";
 import { HiShoppingCart, HiMenuAlt3 } from "react-icons/hi";
@@ -20,6 +20,20 @@ const Navbar = () => {
   const [showProfile, setshowProfile] = useState(false);
   const [loading, setloading] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
+
+  const profileRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setshowProfile(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const navigate = useNavigate();
 
@@ -97,24 +111,82 @@ const Navbar = () => {
               onClick={() => setshowSearch(false)}
             />
           )}
-          {userData ? (
-            <div
-              className="
-                w-8 h-8 rounded-full
-                bg-amber-500 text-black font-semibold
-                flex items-center justify-center
-                cursor-pointer
-              "
-              onClick={() => setshowProfile((p) => !p)}
-            >
-              {userData.name.slice(0, 1)}
-            </div>
-          ) : (
-            <FaCircleUser
-              className="w-7 h-7 cursor-pointer text-gray-300 hover:text-amber-400 transition"
-              onClick={() => setshowProfile((p) => !p)}
-            />
-          )}
+          <div className="relative" ref={profileRef}>
+            {userData ? (
+              <div
+                className="
+                  w-8 h-8 rounded-full
+                  bg-amber-500 text-black font-semibold
+                  flex items-center justify-center
+                  cursor-pointer
+                "
+                onClick={() => setshowProfile((p) => !p)}
+              >
+                {userData.name.slice(0, 1)}
+              </div>
+            ) : (
+              <FaCircleUser
+                className="w-7 h-7 cursor-pointer text-gray-300 hover:text-amber-400 transition"
+                onClick={() => setshowProfile((p) => !p)}
+              />
+            )}
+
+            {showProfile && (
+              <div
+                className="
+                  absolute top-10 right-0 w-44
+                  bg-[#111827] text-gray-200
+                  rounded-xl border border-gray-800
+                  shadow-xl z-50
+                "
+              >
+                <ul className="flex flex-col text-sm">
+                  {!userData && (
+                    <li
+                      className="px-4 py-2 hover:bg-[#020617] hover:text-amber-400 transition cursor-pointer"
+                      onClick={() => {
+                        navigate("/login");
+                        setshowProfile(false);
+                      }}
+                    >
+                      Login
+                    </li>
+                  )}
+
+                  {userData && (
+                    <li
+                      className="px-4 py-2 hover:bg-[#020617] hover:text-amber-400 transition cursor-pointer flex items-center gap-2"
+                      onClick={() => {
+                        handleLogout();
+                        setshowProfile(false);
+                      }}
+                    >
+                      {loading ? <Loading /> : "Logout"}
+                      <IoLogOutOutline />
+                    </li>
+                  )}
+
+                  {userData && (
+                    <Link
+                      to="/order"
+                      className="px-4 py-2 hover:bg-[#020617] hover:text-amber-400 transition"
+                      onClick={() => setshowProfile(false)}
+                    >
+                      My Orders
+                    </Link>
+                  )}
+
+                  <Link
+                    to="/about"
+                    className="px-4 py-2 hover:bg-[#020617] hover:text-amber-400 transition"
+                    onClick={() => setshowProfile(false)}
+                  >
+                    About
+                  </Link>
+                </ul>
+              </div>
+            )}
+          </div>
           <div className="relative">
             <HiShoppingCart
               className="w-7 h-7 cursor-pointer text-gray-300 hover:text-amber-400 transition"
@@ -161,53 +233,6 @@ const Navbar = () => {
               focus:border-amber-400 outline-none
             "
           />
-        </div>
-      )}
-      {showProfile && (
-        <div
-          className="
-            absolute top-[80px] right-4 w-44
-            bg-[#111827] text-gray-200
-            rounded-xl border border-gray-800
-            shadow-xl z-50
-          "
-        >
-          <ul className="flex flex-col text-sm">
-            {!userData && (
-              <li
-                className="px-4 py-2 hover:bg-[#020617] hover:text-amber-400 transition cursor-pointer"
-                onClick={() => navigate("/login")}
-              >
-                Login
-              </li>
-            )}
-
-            {userData && (
-              <li
-                className="px-4 py-2 hover:bg-[#020617] hover:text-amber-400 transition cursor-pointer flex items-center gap-2"
-                onClick={handleLogout}
-              >
-                {loading ? <Loading /> : "Logout"}
-                <IoLogOutOutline />
-              </li>
-            )}
-
-            {userData && (
-              <Link
-                to="/order"
-                className="px-4 py-2 hover:bg-[#020617] hover:text-amber-400 transition"
-              >
-                My Orders
-              </Link>
-            )}
-
-            <Link
-              to="/about"
-              className="px-4 py-2 hover:bg-[#020617] hover:text-amber-400 transition"
-            >
-              About
-            </Link>
-          </ul>
         </div>
       )}
       {mobileMenu && (
