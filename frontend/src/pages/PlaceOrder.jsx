@@ -6,9 +6,10 @@ import { shopDataContext } from "../context/ShopContext";
 import { authDataContext } from "../context/AuthContext";
 import { userDataContext } from "../context/UserContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const PlaceOrder = () => {
-  const [method, setmethod] = useState("cod");
+  const [method, setmethod] = useState("");
   const { serverUrl } = useContext(authDataContext);
   const { userData, authLoading } = useContext(userDataContext);
   const navigate = useNavigate();
@@ -68,6 +69,12 @@ const PlaceOrder = () => {
 
   const onSubmithandler = async (e) => {
     e.preventDefault();
+
+    if (!method) {
+      toast.warn("Please select a payment method");
+      return;
+    }
+
     let orderItems = [];
 
     for (const items in cartItem) {
