@@ -27,12 +27,10 @@ const Login = () => {
             );
       
             await getCurrentUser();
-            const userData = result.data.name;
-            localStorage.setItem("user", JSON.stringify(userData));
             toast.success("Login successful");
             navigate("/");
           } catch (error) {
-            console.log(error);
+            console.error("Login error:", error);
             toast.error("Login failed");
           } finally {
             setloading(false);
@@ -52,15 +50,12 @@ const Login = () => {
             }, {withCredentials:true});
             setUserData({ name, email });
             await getCurrentUser();
-           const userData = result.data.name;
-            localStorage.setItem("user", JSON.stringify(userData));
             setloading(false);
             navigate("/");
             toast.success("Login Successfully");
-            console.log(result.data);
         }
-        catch{
-            console.log("Google Login error");
+        catch (error) {
+            console.error("Google Login error:", error);
             toast.error("Google-signin error");
         }
     }

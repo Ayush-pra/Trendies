@@ -41,7 +41,7 @@ const register = async (req, res) => {
 
     return res.status(201).json(user);
   } catch (error) {
-    console.log("Register error:", error);
+    console.error("Register error:", error);
     res.status(500).json({ message: "Register error" });
   }
 };
@@ -65,7 +65,7 @@ const login = async (req, res) => {
 
     return res.status(200).json(user);
   } catch (error) {
-    console.log("Login error:", error);
+    console.error("Login error:", error);
     res.status(500).json({ message: "Login error" });
   }
 };
@@ -75,7 +75,7 @@ const logout = async (req, res) => {
     res.clearCookie("token", cookieOptions);
     return res.status(200).json({ message: "Logged out" });
   } catch (error) {
-    console.log("Logout error:", error);
+    console.error("Logout error:", error);
     res.status(500).json({ message: "Logout error" });
   }
 };
@@ -94,7 +94,7 @@ const googleLogin = async (req, res) => {
 
     return res.status(200).json(user);
   } catch (error) {
-    console.log("Google login error:", error);
+    console.error("Google login error:", error);
     res.status(500).json({ message: "Google login error" });
   }
 };
@@ -115,7 +115,7 @@ const adminLogin = async (req, res) => {
 
     return res.status(401).json({ message: "Invalid admin credentials" });
   } catch (error) {
-    console.log("Admin login error:", error);
+    console.error("Admin login error:", error);
     res.status(500).json({ message: "Admin login error" });
   }
 };

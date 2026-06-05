@@ -21,13 +21,10 @@ const Registration = () => {
             }, {withCredentials:true});
             // getCurrentUser();
             await getCurrentUser();
-            const userData = result.data.name;
-            localStorage.setItem("user", JSON.stringify(userData));
             navigate("/");
-            console.log(result.data);
         }
         catch (error) {
-          console.log("signup error:", error.response?.data);
+          console.error("signup error:", error.response?.data || error.message);
           alert(error.response?.data?.message);
         };
     }
@@ -42,13 +39,11 @@ const Registration = () => {
             const result = await axios.post(serverUrl + "/api/auth/googlelogin", {
                 name,email
             }, {withCredentials:true});
-            const userData = result.data.name;
-            localStorage.setItem("user", JSON.stringify(userData));
+            await getCurrentUser();
             navigate("/");
-            console.log(result.data);
         }
-        catch{
-            console.log("Google Login error");
+        catch (error) {
+            console.error("Google Login error:", error);
         }
     }
 

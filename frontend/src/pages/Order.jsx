@@ -2,12 +2,22 @@ import React, { useContext, useEffect, useState } from "react";
 import Title from "../components/Title";
 import { shopDataContext } from "../context/ShopContext";
 import { authDataContext } from "../context/AuthContext";
+import { userDataContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Order = () => {
   const [orderData, setorderData] = useState([]);
   const { currency } = useContext(shopDataContext);
   const { serverUrl } = useContext(authDataContext);
+  const { userData, authLoading } = useContext(userDataContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authLoading && !userData) {
+      navigate("/login");
+    }
+  }, [authLoading, userData]);
 
   const loadOrderedData = async () => {
     try {
@@ -33,7 +43,7 @@ const Order = () => {
         setorderData(allOrderItem.reverse());
       }
     } catch (error) {
-      console.log(error);
+      console.error("loadOrderedData error:", error);
     }
   };
 

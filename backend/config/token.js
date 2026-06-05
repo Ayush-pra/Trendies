@@ -5,8 +5,8 @@ const genToken = async (userId)=>{
         const token = await jwt.sign({userId}, process.env.JWT_SECRET, {expiresIn:"7d"})
         return token;
     }
-    catch{
-        console.log("jwt error")
+    catch (error) {
+        console.error("jwt error:", error);
     }
 }
 
@@ -15,8 +15,8 @@ const genTokenAdmin = async (email)=>{
         const token = await jwt.sign({email}, process.env.JWT_SECRET, {expiresIn:"7d"})
         return token;
     }
-    catch{
-        console.log("jwt error")
+    catch (error) {
+        console.error("jwt error:", error);
     }
 }
 

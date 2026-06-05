@@ -16,7 +16,7 @@ const List = () => {
       });
       setlist(result.data);
     } catch (error) {
-      console.log(error);
+      console.error("fetchList error:", error);
     }
   };
 
@@ -33,7 +33,7 @@ const List = () => {
       );
       if (result.data) fetchList();
     } catch (error) {
-      console.log(error);
+      console.error("removelist error:", error);
     }
   };
 

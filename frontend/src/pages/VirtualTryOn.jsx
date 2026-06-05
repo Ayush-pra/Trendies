@@ -15,7 +15,7 @@ const VirtualTryOn = () => {
             );
             setResultImage(response.data.result.output_url);
         } catch (error) {
-            console.log(error);
+            console.error("Virtual Try-On error:", error);
         }
     };
 

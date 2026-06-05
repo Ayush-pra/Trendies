@@ -13,8 +13,9 @@ const adminAuth = async (req, res, next)=>{
         req.adminEmail = process.env.ADMIN_EMAIL;
         next();
     }
-    catch{
-        console.log("authentication error admin");
+    catch (error) {
+        console.error("authentication error admin:", error);
+        return res.status(500).json({ message: "Admin authorization error" });
     }
 }
 

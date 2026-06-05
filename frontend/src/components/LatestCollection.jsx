@@ -9,7 +9,6 @@ const LatestCollection = () => {
     const { products } = useContext(shopDataContext);
     const [latestproduct, setlatestproduct] = useState([]);
     useEffect(() => {
-        console.log("Products in context:", products);
         setlatestproduct(products.slice(0, 8));
     }, [products])
     return (

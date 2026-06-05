@@ -24,7 +24,7 @@ const addToCart = async (req, res)=>{
         return res.status(201).json({message:"Added to Cart"});
     }
     catch(error){
-        console.log(error);
+        console.error("addToCart Error:", error);
         return res.status(500).json({message:"AddToCart Error"});
     }   
 }
@@ -58,7 +58,7 @@ const updateCart = async (req, res) => {
     await User.findByIdAndUpdate(req.userId, { cartData });
     return res.status(200).json({ message: "Cart updated", cartData });
   } catch (error) {
-    console.log(error);
+    console.error("updateCart Error:", error);
     return res.status(500).json({ message: "updateCart Error" });
   }
 };
@@ -74,7 +74,7 @@ const getUserCart = async (req, res) => {
     const cartData = userData.cartData || {};
     return res.status(200).json(cartData);
   } catch (error) {
-    console.log(error);
+    console.error("getUserCart Error:", error);
     return res.status(500).json({ message: "getUserCart Error" });
   }
 };

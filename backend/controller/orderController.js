@@ -29,7 +29,7 @@ const PlacedOrder = async (req, res) => {
         return res.status(201).json({ message: 'Order Place' })
     }
     catch (error) {
-        console.log(error);
+        console.error("PlacedOrder Error:", error);
         return res.status(500).json({ message: 'Order Place error' })
     }
 }
@@ -57,14 +57,14 @@ const placeOrderRazorpay = async (req, res) => {
         }
         await razorpayInstance.orders.create(options, (error, order) => {
             if (error) {
-                console.log(error);
+                console.error("placeOrderRazorpay callback Error:", error);
                 return res.status(500).json(error);
             }
             res.status(200).json(order);
         })
     }
     catch (error) {
-        console.log(error);
+        console.error("placeOrderRazorpay Error:", error);
         res.status(500).json({ message: error.message })
     }
 }
@@ -84,7 +84,7 @@ const verifyRazorpay = async (req, res) => {
         }
     }
     catch(error) {
-        console.log(error)
+        console.error("verifyRazorpay Error:", error);
         res.status(500).json({message:error.message})
     }
 }
@@ -96,7 +96,7 @@ const userOrders = async (req, res) => {
         return res.status(200).json(orders);
     }
     catch (error) {
-        console.log(error);
+        console.error("userOrders Error:", error);
         return res.status(500).json({ message: 'userOrder error' })
     }
 }
@@ -109,7 +109,7 @@ const allOrders = async (req, res) => {
         res.status(200).json(orders);
     }
     catch (error) {
-        console.log(error);
+        console.error("allOrders Error:", error);
         return res.status(500).json({ message: 'AdminOrder error' })
     }
 }
@@ -121,7 +121,7 @@ const updateStatus = async (req, res) => {
         return res.status(201).json({ message: "Status Updated" });
     }
     catch (error) {
-        console.log(error);
+        console.error("updateStatus Error:", error);
         return res.status(500).json({ message: 'updateStatus error' })
     }
 }

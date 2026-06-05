@@ -15,7 +15,7 @@ const isAuth = (req, res, next) => {
     req.userId = tokenVerify.userId; 
     next();
   } catch (error) {
-    console.log("isAuth Error:", error.message);
+    console.error("isAuth Error:", error.message);
     return res.status(500).json({ message: "Auth middleware error" });
   }
 };

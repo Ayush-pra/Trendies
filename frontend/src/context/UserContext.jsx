@@ -6,6 +6,7 @@ export const userDataContext = createContext();
 
 const UserContext = ({ children }) => {
   const [userData, setUserData] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const { serverUrl } = useContext(authDataContext);
 
   const getCurrentUser = async () => {
@@ -14,21 +15,41 @@ const UserContext = ({ children }) => {
         withCredentials: true,
       });
       setUserData(result.data);
-      console.log("User:", result.data);
     } catch (error) {
       setUserData(null);
-      console.log("getCurrentUser Error:", error.message);
+      // Clear stale localStorage if backend says unauthenticated
+      localStorage.removeItem("user");
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await axios.get(serverUrl + "/api/auth/logout", {
+        withCredentials: true,
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setUserData(null);
+      localStorage.removeItem("user");
     }
   };
 
   useEffect(() => {
-    getCurrentUser();
+    const verifyAuth = async () => {
+      setAuthLoading(true);
+      await getCurrentUser();
+      setAuthLoading(false);
+    };
+    verifyAuth();
   }, []);
 
   const value = {
     userData,
     setUserData,
     getCurrentUser,
+    authLoading,
+    logout,
   };
 
   return (

@@ -18,11 +18,10 @@ const ShopContext = ({children}) => {
     const getProducts = async()=>{
         try{
             const result = await axios.get(serverUrl+"/api/product/list");
-            console.log(result.data);
             setproducts(result.data);
         }
         catch(error){
-            console.log(error);
+            console.error("getProducts error:", error);
         }
     }
 
@@ -32,7 +31,7 @@ const ShopContext = ({children}) => {
         setcartItem(result.data);
       }
       catch(error){ 
-        console.log(error);
+        console.error("getUserCart error:", error);
       }
     }
 
@@ -58,11 +57,9 @@ const ShopContext = ({children}) => {
           if(userData){
             try{
               await axios.post(serverUrl + "/api/cart/add", {itemId, size}, {withCredentials:true});
-              console.log("added to cart");
             }
             catch(error){
-              console.log(error);
-         
+              console.error("AddtoCart backend error:", error);
             }
           }
     }
@@ -77,7 +74,7 @@ const ShopContext = ({children}) => {
             }
           }
           catch(error){
-            console.log(error);
+            console.error("getCartCount error:", error);
           }
         }
       }
@@ -110,7 +107,6 @@ const ShopContext = ({children}) => {
         { itemId, size, quantity },
         { withCredentials: true }
       );
-      console.log("Cart updated");
     } catch (error) {
       console.error("Update error:", error.response?.data || error.message);
     }
@@ -129,7 +125,7 @@ const ShopContext = ({children}) => {
               }
           }
           catch(error){
-              console.log(error);
+              console.error("getCartAmount error:", error);
           }
         }
       }

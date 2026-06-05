@@ -25,10 +25,9 @@ const Login = () => {
           navigate("/");
           setloading(false);
           toast.success("Admin Login Successfully");
-          console.log(result.data);
         }
-        catch{
-          console.log("error Admin login");
+        catch (error) {
+          console.error("error Admin login:", error);
           toast.error("Admin Login error");
         }
     }

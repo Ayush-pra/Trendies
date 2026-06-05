@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import Loading from "./Loading";
 
 const Navbar = () => {
-  const { userData, getCurrentUser } = useContext(userDataContext);
+  const { userData, logout } = useContext(userDataContext);
   const { serverUrl } = useContext(authDataContext);
   const { showSearch, setshowSearch, search, setsearch, getCartCount } =
     useContext(shopDataContext);
@@ -26,17 +26,10 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       setloading(true);
-
-localStorage.removeItem("user");
+      await logout();
       navigate("/");
-
-            
-      await axios.get(serverUrl + "/api/auth/logout", {
-        withCredentials: true,
-      });
-      await getCurrentUser();
       toast.success("Logout Successfully");
-    } catch {
+    } catch (error) {
       toast.error("Logout Error");
     } finally {
       setloading(false);

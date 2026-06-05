@@ -1,17 +1,25 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Title from "../components/Title";
 import CartTotal from "../components/CartTotal";
 import { useNavigate } from "react-router-dom";
 import { shopDataContext } from "../context/ShopContext";
 import { authDataContext } from "../context/AuthContext";
+import { userDataContext } from "../context/UserContext";
 import axios from "axios";
 
 const PlaceOrder = () => {
   const [method, setmethod] = useState("cod");
   const { serverUrl } = useContext(authDataContext);
+  const { userData, authLoading } = useContext(userDataContext);
   const navigate = useNavigate();
   const { cartItem, setcartItem, getCartAmount, delivery_fee, products } =
     useContext(shopDataContext);
+
+  useEffect(() => {
+    if (!authLoading && !userData) {
+      navigate("/login");
+    }
+  }, [authLoading, userData]);
 
   const [formdata, setformdata] = useState({
     firstname: "",

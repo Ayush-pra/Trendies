@@ -15,7 +15,7 @@ const Add = () => {
   const [description, setdescription] = useState("");
   const [category, setcategory] = useState("Men");
   const [price, setprice] = useState("");
-  const [SubCategory, setSubCategory] = useState("Topwear");
+  const [SubCategory, setSubCategory] = useState("TopWear");
   const [bestseller, setbestseller] = useState(false);
   const [sizes, setsizes] = useState([]);
   const [loading, setloading] = useState(false);
@@ -51,7 +51,7 @@ const Add = () => {
       setprice("");
       setbestseller(false);
       setcategory("Men");
-      setSubCategory("Topwear");
+      setSubCategory("TopWear");
     } catch (error) {
       toast.error("Product Add Failed");
     }
@@ -104,15 +104,15 @@ const Add = () => {
             required
           />
           <div className="flex flex-col md:flex-row gap-6">
-            <select className="bg-slate-700 px-4 py-3 rounded-xl" onChange={(e) => setcategory(e.target.value)}>
-              <option>Men</option>
-              <option>Women</option>
-              <option>Kids</option>
+            <select className="bg-slate-700 px-4 py-3 rounded-xl" value={category} onChange={(e) => setcategory(e.target.value)}>
+              <option value="Men">Men</option>
+              <option value="Women">Women</option>
+              <option value="Kids">Kids</option>
             </select>
-            <select className="bg-slate-700 px-4 py-3 rounded-xl" onChange={(e) => setSubCategory(e.target.value)}>
-              <option>Topwear</option>
-              <option>Bottomwear</option>
-              <option>Winterwear</option>
+            <select className="bg-slate-700 px-4 py-3 rounded-xl" value={SubCategory} onChange={(e) => setSubCategory(e.target.value)}>
+              <option value="TopWear">TopWear</option>
+              <option value="BottomWear">BottomWear</option>
+              <option value="WinterWear">WinterWear</option>
             </select>
           </div>
           <input

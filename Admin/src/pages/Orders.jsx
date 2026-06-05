@@ -18,7 +18,7 @@ const Orders = () => {
       setorder(result.data.reverse());
     }
     catch (error) {
-      console.log(error);
+      console.error("fetchOrders error:", error);
     }
   }
 
@@ -30,7 +30,7 @@ const Orders = () => {
       }
     }
     catch(error){
-      console.log(error);
+      console.error("statusHandle error:", error);
     }
   }
 

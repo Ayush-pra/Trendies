@@ -16,11 +16,10 @@ const AdminContext = ({ children }) => {
     try {
       const result = await axios.get(serverUrl + "/api/user/getCurrentAdmin", { withCredentials: true });
       setadminData(result.data);
-      console.log(result.data);
     }
     catch (err) {
       setadminData(null);
-      console.log("getAdmin error", err.response?.data || err.message);
+      console.error("getAdmin error:", err);
     }
 
   }

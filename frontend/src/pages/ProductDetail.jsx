@@ -23,7 +23,7 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [loading, setloading] = useState(false);
     const [addedToCart, setAddedToCart] = useState(false);
-    const { userData } = useContext(userDataContext);
+    const { userData, authLoading } = useContext(userDataContext);
     const navigate = useNavigate();
     // const fetchProductData = async()=>{
     //     products.map((item)=>{
@@ -59,11 +59,10 @@ const ProductDetail = () => {
 };
     
    useEffect(() => {
-        const user = localStorage.getItem("user");
-          if (!user) {
-              navigate("/login");
-          }
-        }, []);
+        if (!authLoading && !userData) {
+            navigate("/login");
+        }
+    }, [authLoading, userData]);
     
     useEffect(()=>{
         fetchProductData()

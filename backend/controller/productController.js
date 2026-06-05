@@ -45,25 +45,15 @@ const addProduct = async (req, res) => {
   }
 };
 
-// const listproduct = async (req, res) => {
-//   try {
-//     const products = await Product.find({});
-//     return res.status(200).json(products);
-//   } catch (error) {
-//     console.log(error);
-//     return res.status(500).json({ message: "List product failed" });
-//   }
-// };
-
 const listproduct = async (req, res) => {
   try {
     const products = await Product.find({})
-      .select('name price image1 image2 image3 image4 category bestseller') 
+      .select('name price image1 image2 image3 image4 category subCategory sizes bestseller description date') 
       .lean(); 
 
     return res.status(200).json(products);
   } catch (error) {
-    console.log(error);
+    console.error("List product error:", error);
     return res.status(500).json({ message: "List product failed" });
   }
 };
@@ -83,7 +73,7 @@ const getSingleProduct = async (req, res) => {
 
     res.json({ success: true, product });
   } catch (error) {
-    console.error(error);
+    console.error("Get single product error:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
@@ -100,7 +90,7 @@ const removeproduct = async (req, res) => {
 
     return res.status(200).json({ message: "Product removed", product });
   } catch (error) {
-    console.log(error);
+    console.error("Remove product error:", error);
     return res.status(500).json({ message: "Remove product failed" });
   }
 };

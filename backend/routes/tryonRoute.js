@@ -9,7 +9,7 @@ router.post("/virtual", async (req, res) => {
       return res.status(400).json({ message: "Images are required" });
     }
 
-    console.log("Received images lengths:", personImage.length, clothImage.length);
+
 
     // Dummy response for testing
     return res.json({ result: { output_url: "http://localhost:3000/sample.jpg" } });

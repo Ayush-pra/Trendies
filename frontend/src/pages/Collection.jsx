@@ -29,17 +29,33 @@ const Collection = () => {
 
   const applyFilter = () => {
     let productCopy = products.slice();
-    if(showSearch && search) {
-        productCopy=productCopy.filter(item=>item.name.toLowerCase().includes(search.toLowerCase()))
-    }
-    if (category.length > 0) {
-        productCopy = productCopy.filter(item => category.includes(item.category));
-    }
-    if (subcategory.length > 0) {
-      productCopy = productCopy.filter(item => subcategory.includes(item.subCategory));
+
+    // 1. Search Filter (AND logic)
+    if (showSearch && search) {
+      productCopy = productCopy.filter(item => 
+        item.name && item.name.toLowerCase().includes(search.toLowerCase().trim())
+      );
     }
 
-    // Apply sorting
+    // 2. Category Filter (AND logic with case-insensitive check)
+    if (category.length > 0) {
+      productCopy = productCopy.filter(item => 
+        item.category && category.some(cat => cat.toLowerCase() === item.category.toLowerCase().trim())
+      );
+    }
+
+    // 3. SubCategory Filter (AND logic with space-insensitive & case-insensitive check)
+    if (subcategory.length > 0) {
+      productCopy = productCopy.filter(item => {
+        if (!item.subCategory) return false;
+        const normalizedItemSub = item.subCategory.toLowerCase().replace(/\s+/g, "");
+        return subcategory.some(sub => 
+          sub.toLowerCase().replace(/\s+/g, "") === normalizedItemSub
+        );
+      });
+    }
+
+    // 4. Sorting logic
     if (sortType === "low-high") {
       productCopy.sort((a, b) => a.price - b.price);
     } else if (sortType === "high-low") {
@@ -50,12 +66,8 @@ const Collection = () => {
   };
 
   useEffect(() => {
-    setFilterProduct(products);
-  }, [products]);
-
-  useEffect(() => {
     applyFilter();
-  }, [category, subcategory, sortType, search, showSearch]);
+  }, [category, subcategory, sortType, search, showSearch, products]);
 
   return (
     <div className='w-full min-h-screen bg-gradient-to-l from-[#131212] to-[#081619] flex flex-col md:flex-row pt-[70px]'>
