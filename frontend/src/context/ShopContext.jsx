@@ -136,9 +136,13 @@ const ShopContext = ({children}) => {
         getProducts();
     }, []);
 
-    useEffect(()=>{
-      getUserCart();
-    }, []);
+    useEffect(() => {
+      if (userData) {
+        getUserCart();
+      } else {
+        setcartItem({});
+      }
+    }, [userData]);
 
     const value={
         products, currency, delivery_fee, getProducts,search, setsearch,showSearch, setshowSearch, cartItem, AddtoCart, getCartCount, setcartItem, updateQuantity, getCartAmount

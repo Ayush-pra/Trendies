@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
+import { authDataContext } from "../context/AuthContext";
 
 const VirtualTryOn = () => {
+    const { serverUrl } = useContext(authDataContext);
     const [personImage, setPersonImage] = useState(null);
     const [clothImage, setClothImage] = useState(null);
     const [resultImage, setResultImage] = useState(null);
@@ -9,7 +11,7 @@ const VirtualTryOn = () => {
     const handleSubmit = async () => {
         try {
             const response = await axios.post(
-                "http://localhost:3000/api/tryon/virtual",
+                serverUrl + "/api/tryon/virtual",
                 { personImage, clothImage },
                 { withCredentials: true }
             );
