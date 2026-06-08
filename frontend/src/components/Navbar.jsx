@@ -2,10 +2,12 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import { IoSearchSharp, IoLogOutOutline } from "react-icons/io5";
 import { FaCircleUser } from "react-icons/fa6";
 import { HiShoppingCart, HiMenuAlt3 } from "react-icons/hi";
+import { FaRegHeart } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { userDataContext } from "../context/UserContext";
 import { authDataContext } from "../context/AuthContext";
 import { shopDataContext } from "../context/ShopContext";
+import { wishlistDataContext } from "../context/WishlistContext";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -16,6 +18,7 @@ const Navbar = () => {
   const { serverUrl } = useContext(authDataContext);
   const { showSearch, setshowSearch, search, setsearch, getCartCount } =
     useContext(shopDataContext);
+  const { wishlistIds } = useContext(wishlistDataContext);
 
   const [showProfile, setshowProfile] = useState(false);
   const [loading, setloading] = useState(false);
@@ -176,6 +179,16 @@ const Navbar = () => {
                     </Link>
                   )}
 
+                  {userData && (
+                    <Link
+                      to="/wishlist"
+                      className="px-4 py-2 hover:bg-[#020617] hover:text-amber-400 transition"
+                      onClick={() => setshowProfile(false)}
+                    >
+                      My Wishlist
+                    </Link>
+                  )}
+
                   <Link
                     to="/about"
                     className="px-4 py-2 hover:bg-[#020617] hover:text-amber-400 transition"
@@ -185,6 +198,25 @@ const Navbar = () => {
                   </Link>
                 </ul>
               </div>
+            )}
+          </div>
+          {/* Wishlist icon with count badge */}
+          <div className="relative">
+            <FaRegHeart
+              className="w-6 h-6 cursor-pointer text-gray-300 hover:text-amber-400 transition"
+              onClick={() => navigate("/wishlist")}
+            />
+            {wishlistIds.size > 0 && (
+              <span
+                className="
+                  absolute -top-2 -right-2
+                  w-5 h-5 rounded-full
+                  bg-red-500 text-white text-[10px] font-bold
+                  flex items-center justify-center
+                "
+              >
+                {wishlistIds.size}
+              </span>
             )}
           </div>
           <div className="relative">

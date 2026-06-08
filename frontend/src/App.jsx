@@ -16,6 +16,7 @@ import Order from './pages/Order';
 import { ToastContainer, toast } from 'react-toastify';
 import SplashScreen from './components/SplashScreen';
 import Chatbot from './components/Chatbot';
+import Wishlist from './pages/Wishlist';
 
 const App = () => {
   const {userData} = useContext(userDataContext);
@@ -55,6 +56,7 @@ const App = () => {
       <Route path='/cart' element={<Cart/>}/>
       <Route path='/placeorder' element={<PlaceOrder/>}/>
       <Route path='/order' element={<Order/>} />
+      <Route path='/wishlist' element={<Wishlist/>} />
     </Routes> 
     {!hideNavbarPaths.includes(location.pathname) && <Chatbot />}
     </>

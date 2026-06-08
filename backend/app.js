@@ -13,6 +13,7 @@ const cartRoute = require("./routes/cartRoute");
 const orderRoute = require("./routes/orderRoute");
 const tryonRoute = require("./routes/tryonRoute");
 const chatRoute = require("./routes/chatRoute");
+const wishlistRoute = require("./routes/wishlistRoute");
 
 const app = express();
 
@@ -23,10 +24,10 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
-      // "http://localhost:5173",
-      // "http://localhost:5174",
-      "https://trendies-frontend-b7wv.onrender.com",
-      "https://trendies-admin-o01i.onrender.com",
+      "http://localhost:5173",
+      "http://localhost:5174",
+      // "https://trendies-frontend-b7wv.onrender.com",
+      // "https://trendies-admin-o01i.onrender.com",
     ],
     credentials: true,
   })
@@ -39,6 +40,7 @@ app.use("/api/cart", cartRoute);
 app.use("/api/order", orderRoute);
 app.use("/api/tryon", tryonRoute);
 app.use("/api/chat", chatRoute);
+app.use("/api/wishlist", wishlistRoute);
 
 app.get("/", (req, res) => {
   res.send("Server running 🚀");

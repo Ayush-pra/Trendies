@@ -2,28 +2,60 @@ import React, { useContext, useEffect, useState } from 'react'
 import Title from '../components/Title';
 import { shopDataContext } from '../context/ShopContext';
 import Card from '../components/Card';
+import { RxCross2 } from 'react-icons/rx';
+
+// Price range definitions for the price filter
+const PRICE_RANGES = [
+  { key: '0-50', label: '₹0 - ₹50', min: 0, max: 50 },
+  { key: '50-100', label: '₹50 - ₹100', min: 50, max: 100 },
+  { key: '100-200', label: '₹100 - ₹200', min: 100, max: 200 },
+  { key: '200+', label: '₹200+', min: 200, max: Infinity },
+];
 
 const Collection = () => {
   const [showFilter, setShowFilter] = useState(false);
-  const { products, search, showSearch} = useContext(shopDataContext);
+  const { products, search, showSearch } = useContext(shopDataContext);
   const [filterProduct, setFilterProduct] = useState([]);
   const [category, setCategory] = useState([]);
   const [subcategory, setSubcategory] = useState([]);
+  const [priceRanges, setPriceRanges] = useState([]);
   const [sortType, setSortType] = useState("relavent");
 
-  const toggleCategory = (e) => {
-    if (category.includes(e.target.value)) {
-      setCategory(prev => prev.filter(item => item !== e.target.value));
+  // Toggle category filter (controlled checkboxes)
+  const toggleCategory = (value) => {
+    if (category.includes(value)) {
+      setCategory(prev => prev.filter(item => item !== value));
     } else {
-      setCategory(prev => [...prev, e.target.value]);
+      setCategory(prev => [...prev, value]);
     }
   };
 
-  const toggleSubCategory = (e) => {
-    if (subcategory.includes(e.target.value)) {
-      setSubcategory(prev => prev.filter(item => item !== e.target.value));
+  // Toggle subcategory filter (controlled checkboxes)
+  const toggleSubCategory = (value) => {
+    if (subcategory.includes(value)) {
+      setSubcategory(prev => prev.filter(item => item !== value));
     } else {
-      setSubcategory(prev => [...prev, e.target.value]);
+      setSubcategory(prev => [...prev, value]);
+    }
+  };
+
+  // Toggle price range filter
+  const togglePriceRange = (key) => {
+    if (priceRanges.includes(key)) {
+      setPriceRanges(prev => prev.filter(item => item !== key));
+    } else {
+      setPriceRanges(prev => [...prev, key]);
+    }
+  };
+
+  // Remove a specific filter (used by filter chips)
+  const removeFilter = (type, value) => {
+    if (type === 'category') {
+      setCategory(prev => prev.filter(item => item !== value));
+    } else if (type === 'subcategory') {
+      setSubcategory(prev => prev.filter(item => item !== value));
+    } else if (type === 'price') {
+      setPriceRanges(prev => prev.filter(item => item !== value));
     }
   };
 
@@ -32,14 +64,14 @@ const Collection = () => {
 
     // 1. Search Filter (AND logic)
     if (showSearch && search) {
-      productCopy = productCopy.filter(item => 
+      productCopy = productCopy.filter(item =>
         item.name && item.name.toLowerCase().includes(search.toLowerCase().trim())
       );
     }
 
     // 2. Category Filter (AND logic with case-insensitive check)
     if (category.length > 0) {
-      productCopy = productCopy.filter(item => 
+      productCopy = productCopy.filter(item =>
         item.category && category.some(cat => cat.toLowerCase() === item.category.toLowerCase().trim())
       );
     }
@@ -49,13 +81,21 @@ const Collection = () => {
       productCopy = productCopy.filter(item => {
         if (!item.subCategory) return false;
         const normalizedItemSub = item.subCategory.toLowerCase().replace(/\s+/g, "");
-        return subcategory.some(sub => 
+        return subcategory.some(sub =>
           sub.toLowerCase().replace(/\s+/g, "") === normalizedItemSub
         );
       });
     }
 
-    // 4. Sorting logic
+    // 4. Price Range Filter (OR logic within selected ranges)
+    if (priceRanges.length > 0) {
+      const selectedRanges = PRICE_RANGES.filter(r => priceRanges.includes(r.key));
+      productCopy = productCopy.filter(item =>
+        selectedRanges.some(range => item.price >= range.min && item.price < range.max)
+      );
+    }
+
+    // 5. Sorting logic
     if (sortType === "low-high") {
       productCopy.sort((a, b) => a.price - b.price);
     } else if (sortType === "high-low") {
@@ -67,13 +107,16 @@ const Collection = () => {
 
   useEffect(() => {
     applyFilter();
-  }, [category, subcategory, sortType, search, showSearch, products]);
+  }, [category, subcategory, priceRanges, sortType, search, showSearch, products]);
+
+  // Check if any filters are active (for showing filter chips section)
+  const hasActiveFilters = category.length > 0 || subcategory.length > 0 || priceRanges.length > 0;
 
   return (
     <div className='w-full min-h-screen bg-gradient-to-l from-[#131212] to-[#081619] flex flex-col md:flex-row pt-[70px]'>
       {/* Mobile Filter Toggle */}
       <div className='md:hidden p-4'>
-        <button 
+        <button
           onClick={() => setShowFilter(!showFilter)}
           className='bg-slate-700 text-white px-4 py-2 rounded-md'
         >
@@ -89,18 +132,18 @@ const Collection = () => {
         <div className='border-2 border-[#dedcdc] p-4 mt-4 rounded-md bg-zinc-900'>
           <p className='text-lg text-[#f8fafa] mb-2'>Categories:</p>
           <div className='flex flex-col gap-2'>
-            <label className='flex items-center gap-2'>
-              <input type='checkbox' value='Men' onChange={toggleCategory} className='w-4 h-4' /> 
-              Men
-            </label>
-            <label className='flex items-center gap-2'>
-              <input type='checkbox' value='Women' onChange={toggleCategory} className='w-4 h-4' /> 
-              Women
-            </label>
-            <label className='flex items-center gap-2'>
-              <input type='checkbox' value='Kids' onChange={toggleCategory} className='w-4 h-4' /> 
-              Kids
-            </label>
+            {['Men', 'Women', 'Kids'].map((cat) => (
+              <label key={cat} className='flex items-center gap-2 cursor-pointer'>
+                <input
+                  type='checkbox'
+                  value={cat}
+                  checked={category.includes(cat)}
+                  onChange={() => toggleCategory(cat)}
+                  className='w-4 h-4'
+                />
+                {cat}
+              </label>
+            ))}
           </div>
         </div>
 
@@ -108,25 +151,44 @@ const Collection = () => {
         <div className='border-2 border-[#dedcdc] p-4 mt-4 rounded-md bg-zinc-900'>
           <p className='text-lg text-[#f8fafa] mb-2'>Sub-Categories:</p>
           <div className='flex flex-col gap-2'>
-            <label className='flex items-center gap-2'>
-              <input type='checkbox' value='TopWear' onChange={toggleSubCategory} className='w-4 h-4' /> 
-              TopWear
-            </label>
-            <label className='flex items-center gap-2'>
-              <input type='checkbox' value='BottomWear' onChange={toggleSubCategory} className='w-4 h-4' /> 
-              BottomWear
-            </label>
-            <label className='flex items-center gap-2'>
-              <input type='checkbox' value='WinterWear' onChange={toggleSubCategory} className='w-4 h-4' /> 
-              WinterWear
-            </label>
+            {['TopWear', 'BottomWear', 'WinterWear'].map((sub) => (
+              <label key={sub} className='flex items-center gap-2 cursor-pointer'>
+                <input
+                  type='checkbox'
+                  value={sub}
+                  checked={subcategory.includes(sub)}
+                  onChange={() => toggleSubCategory(sub)}
+                  className='w-4 h-4'
+                />
+                {sub}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Price Range Filter */}
+        <div className='border-2 border-[#dedcdc] p-4 mt-4 rounded-md bg-zinc-900'>
+          <p className='text-lg text-[#f8fafa] mb-2'>Price Range:</p>
+          <div className='flex flex-col gap-2'>
+            {PRICE_RANGES.map((range) => (
+              <label key={range.key} className='flex items-center gap-2 cursor-pointer'>
+                <input
+                  type='checkbox'
+                  value={range.key}
+                  checked={priceRanges.includes(range.key)}
+                  onChange={() => togglePriceRange(range.key)}
+                  className='w-4 h-4'
+                />
+                {range.label}
+              </label>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Collection Content */}
       <div className='flex-1 p-5'>
-        <div className='flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4'>
+        <div className='flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4 gap-4'>
           <Title text1='ALL' text2='COLLECTION' />
           <select
             value={sortType}
@@ -138,6 +200,56 @@ const Collection = () => {
             <option value="high-low">Sort By: High to Low</option>
           </select>
         </div>
+
+        {/* Active Filter Chips */}
+        {hasActiveFilters && (
+          <div className='flex flex-wrap gap-2 mb-4'>
+            {category.map((cat) => (
+              <span
+                key={`cat-${cat}`}
+                className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/15 text-amber-400 text-sm border border-amber-500/30 hover:bg-amber-500/25 transition-colors'
+              >
+                {cat}
+                <RxCross2
+                  className='w-3.5 h-3.5 cursor-pointer hover:text-white transition-colors'
+                  onClick={() => removeFilter('category', cat)}
+                />
+              </span>
+            ))}
+            {subcategory.map((sub) => (
+              <span
+                key={`sub-${sub}`}
+                className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/15 text-amber-400 text-sm border border-amber-500/30 hover:bg-amber-500/25 transition-colors'
+              >
+                {sub}
+                <RxCross2
+                  className='w-3.5 h-3.5 cursor-pointer hover:text-white transition-colors'
+                  onClick={() => removeFilter('subcategory', sub)}
+                />
+              </span>
+            ))}
+            {priceRanges.map((rangeKey) => {
+              const range = PRICE_RANGES.find(r => r.key === rangeKey);
+              return (
+                <span
+                  key={`price-${rangeKey}`}
+                  className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/15 text-amber-400 text-sm border border-amber-500/30 hover:bg-amber-500/25 transition-colors'
+                >
+                  {range?.label}
+                  <RxCross2
+                    className='w-3.5 h-3.5 cursor-pointer hover:text-white transition-colors'
+                    onClick={() => removeFilter('price', rangeKey)}
+                  />
+                </span>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Product Count */}
+        <p className='text-gray-400 text-sm mb-4'>
+          Showing <span className='text-amber-400 font-semibold'>{filterProduct.length}</span> Products
+        </p>
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
