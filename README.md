@@ -54,7 +54,7 @@ The platform is designed with a **separation of concerns** architecture — the 
 - **Dual Payment Support** — Razorpay (UPI, Cards, Wallets) and Cash on Delivery with explicit user selection.
 - **Wishlist System** — Dedicated wishlist schema and collection, enabling authenticated users to toggle products, view saved items, and track totals with a navbar heart badge.
 - **Price Range Filtering** — Multi-range sidebar controls dynamically coupled with category/subcategory tags and active chip selectors.
-- **Stateless Pagination** — Dynamic layout loading that paginates matching results into pages of 12 when search/filter attributes are applied.
+- **Pagination** — Dynamic layout loading that paginates matching results into pages when search/filter attributes are applied.
 
 ---
 
