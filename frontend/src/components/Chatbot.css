@@ -50,8 +50,17 @@
 }
 
 @keyframes chatbot-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.15); opacity: 0; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
 }
 
 /* ---------- Chat Panel ---------- */
@@ -407,8 +416,18 @@
 }
 
 @keyframes chatbot-typing-bounce {
-  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-  30% { transform: translateY(-6px); opacity: 1; }
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
 }
 
 /* ---------- Welcome Message ---------- */
@@ -478,13 +497,13 @@
   }
 
   .chatbot-input-area {
-    padding: 10px 12px !important;
+    padding: 10px 12px 50px 12px !important;
   }
 
   .chatbot-input {
     height: 38px !important;
     font-size: 13px !important;
-    padding: 0 12px !important;
+    padding: 20px 12px !important;
   }
 
   .chatbot-send {
