@@ -16,9 +16,9 @@ const LatestCollection = () => {
             <div className='h-[15%] w-[100%] text-center md:mt-[50px]'><Title text1={"Latest"} text2={"Collections"} />
                 <p className='w-[100%] m-auto text-[25px] px-[10px] text-blue-100'>Step into Style - New Collection Dropping This Season!!</p>
             </div>
-            <div className='w-[100%] h-[50%] mt-[30px] flex items-center justify-center flex-wrap gap-[30px]'>
+            <div className='w-full mt-[30px] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 px-2 sm:px-4'>
                 {latestproduct.length === 0 ? (
-                    <p className="text-gray-400">No products available</p>
+                    <p className="text-gray-400 text-center col-span-full">No products available</p>
                 ) : (
                     latestproduct.map((item, index) => (
                         <Card1 key={index} name={item.name} image={item.image1} id={item._id} price={item.price} />

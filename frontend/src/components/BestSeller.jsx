@@ -17,7 +17,7 @@ const BestSeller = () => {
         <Title text1={'BEST'} text2={'SELLER'}></Title>
         <p className='w-[100%] m-auto text-[20px] px-[10px] text-blue-100'>Tried, Tested, Loved Discover Our All-Time BestSeller</p>
       </div>
-      <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
+      <div className="mt-10 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8 px-2 sm:px-4">
         {
           bestSeller.map((item,index)=>(
             <Card1 key={index} name={item.name} id={item._id} price={item.price} image={item.image1}/>

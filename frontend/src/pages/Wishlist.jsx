@@ -48,7 +48,7 @@ const Wishlist = () => {
             <div className='w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin'></div>
           </div>
         ) : wishlistProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-6">
             {wishlistProducts.map((item) => (
               <div key={item._id} className='relative'>
                 <Card

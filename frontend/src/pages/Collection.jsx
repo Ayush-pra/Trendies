@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react'
+import React, { useContext, useEffect, useState, useMemo, useRef } from 'react'
 import Title from '../components/Title';
 import { shopDataContext } from '../context/ShopContext';
 import Card from '../components/Card';
@@ -27,6 +27,27 @@ const Collection = () => {
 
   // New state for pagination
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Custom sort dropdown state and ref
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsSortOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const sortLabels = {
+    relavent: "Sort By: Relevant",
+    "low-high": "Sort By: Low to High",
+    "high-low": "Sort By: High to Low",
+  };
 
   // Mode Detection: Pagination Mode if search/filters are active, otherwise full catalog view
   const isRefinedView = useMemo(() => {
@@ -240,15 +261,53 @@ const Collection = () => {
       <div className='flex-1 p-5'>
         <div className='flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4 gap-4'>
           <Title text1='ALL' text2='COLLECTION' />
-          <select
-            value={sortType}
-            onChange={(e) => setSortType(e.target.value)}
-            className='bg-zinc-900 w-full lg:w-auto min-w-[200px] h-12 px-3 text-white rounded-lg border-2 border-white hover:border-amber-400 transition-colors'
-          >
-            <option value="relavent">Sort By: Relevant</option>
-            <option value="low-high">Sort By: Low to High</option>
-            <option value="high-low">Sort By: High to Low</option>
-          </select>
+          <div className='relative w-full lg:w-auto min-w-[200px]' ref={dropdownRef}>
+            <button
+              onClick={() => setIsSortOpen(!isSortOpen)}
+              className='bg-zinc-900 w-full h-12 px-3 text-white rounded-lg border-2 border-white hover:border-amber-400 transition-colors flex items-center justify-between gap-2 text-sm sm:text-base font-medium'
+            >
+              <span>{sortLabels[sortType] || "Sort By: Relevant"}</span>
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {isSortOpen && (
+              <div className='absolute right-0 top-full mt-1.5 w-full bg-zinc-950 border-2 border-white/20 rounded-lg shadow-2xl z-50 overflow-hidden py-1'>
+                <button
+                  onClick={() => {
+                    setSortType("relavent");
+                    setIsSortOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-3 text-sm sm:text-base text-gray-200 hover:bg-amber-500 hover:text-black transition-colors ${sortType === 'relavent' ? 'bg-zinc-800 text-amber-400 font-semibold' : ''}`}
+                >
+                  Sort By: Relevant
+                </button>
+                <button
+                  onClick={() => {
+                    setSortType("low-high");
+                    setIsSortOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-3 text-sm sm:text-base text-gray-200 hover:bg-amber-500 hover:text-black transition-colors ${sortType === 'low-high' ? 'bg-zinc-800 text-amber-400 font-semibold' : ''}`}
+                >
+                  Sort By: Low to High
+                </button>
+                <button
+                  onClick={() => {
+                    setSortType("high-low");
+                    setIsSortOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-3 text-sm sm:text-base text-gray-200 hover:bg-amber-500 hover:text-black transition-colors ${sortType === 'high-low' ? 'bg-zinc-800 text-amber-400 font-semibold' : ''}`}
+                >
+                  Sort By: High to Low
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Active Filter Chips */}
@@ -302,7 +361,7 @@ const Collection = () => {
         </p>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-6">
           {displayProducts.length > 0 ? (
             displayProducts.map((item, index) => (
               <Card

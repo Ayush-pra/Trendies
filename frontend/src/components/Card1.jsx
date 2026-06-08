@@ -18,18 +18,18 @@ const Card1 = ({ name, image, price, id }) => {
         hover:scale-105 hover:shadow-xl
       "
     >
-      <div className="w-full h-[260px] overflow-hidden">
+      <div className="w-full h-40 sm:h-52 md:h-60 lg:h-[260px] overflow-hidden">
         <img
           src={image}
           alt={name}
           className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
         />
       </div>
-      <div className="p-4">
-        <h3 className="text-gray-200 text-base font-semibold line-clamp-2">
+      <div className="p-2 sm:p-4">
+        <h3 className="text-gray-200 text-sm sm:text-base font-semibold line-clamp-2">
           {name}
         </h3>
-        <p className="text-gray-400 text-sm mt-2">
+        <p className="text-gray-400 text-xs sm:text-sm mt-1 sm:mt-2">
           {currency}{price}
         </p>
       </div>
