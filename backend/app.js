@@ -26,8 +26,8 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      // "https://trendies-frontend-b7wv.onrender.com",
-      // "https://trendies-admin-o01i.onrender.com",
+      "https://trendies-frontend-b7wv.onrender.com",
+      "https://trendies-admin-o01i.onrender.com",
     ],
     credentials: true,
   })
