@@ -52,6 +52,9 @@ The platform is designed with a **separation of concerns** architecture — the 
 - **Secure Session Management** — HTTP-only JWT cookies as the single source of truth. No localStorage auth hacks.
 - **Real-Time Order Lifecycle** — Orders progress through 5 trackable stages, synced between the user dashboard and admin panel.
 - **Dual Payment Support** — Razorpay (UPI, Cards, Wallets) and Cash on Delivery with explicit user selection.
+- **Wishlist System** — Dedicated wishlist schema and collection, enabling authenticated users to toggle products, view saved items, and track totals with a navbar heart badge.
+- **Price Range Filtering** — Multi-range sidebar controls dynamically coupled with category/subcategory tags and active chip selectors.
+- **Stateless Pagination** — Dynamic layout loading that paginates matching results into pages of 12 when search/filter attributes are applied.
 
 ---
 
@@ -265,6 +268,13 @@ VITE_RAZORPAY_KEY_ID=your_razorpay_key_id
 | `POST` | `/add` | Add new product (with images) | 🔒 Admin |
 | `POST` | `/remove` | Delete a product | 🔒 Admin |
 
+### Wishlist — `/api/wishlist`
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| `POST` | `/toggle` | Toggle item in wishlist (adds/removes) | 🔒 User |
+| `GET` | `/` | Fetch all user's wishlisted product IDs | 🔒 User |
+
 ### Cart — `/api/cart`
 
 | Method | Endpoint | Description | Auth |
@@ -300,14 +310,17 @@ Trendies/
 ├── frontend/                    # User-facing storefront
 │   ├── src/
 │   │   ├── components/          # Reusable UI components
-│   │   │   ├── Navbar.jsx       #   Navigation with profile dropdown
+│   │   │   ├── Navbar.jsx       #   Navigation with profile dropdown & wishlist icon
+│   │   │   ├── Card.jsx         #   Card component with wishlist heart icon and hover effects
+│   │   │   ├── Pagination.jsx   #   Reusable stateless pagination component
 │   │   │   ├── Chatbot.jsx      #   AI fashion assistant widget
 │   │   │   ├── SplashScreen.jsx #   Animated brand intro
 │   │   │   ├── CartTotal.jsx    #   Cart summary component
 │   │   │   ├── BestSeller.jsx   #   Featured products carousel
 │   │   │   └── ...
 │   │   ├── pages/               # Route-level pages
-│   │   │   ├── Collection.jsx   #   Product catalog with filters
+│   │   │   ├── Collection.jsx   #   Product catalog with pagination
+│   │   │   ├── Wishlist.jsx     #   Dedicated wishlist items management page
 │   │   │   ├── ProductDetail.jsx#   Single product view
 │   │   │   ├── Cart.jsx         #   Shopping cart
 │   │   │   ├── PlaceOrder.jsx   #   Checkout with payment selection
@@ -318,7 +331,8 @@ Trendies/
 │   │   ├── context/             # React Context providers
 │   │   │   ├── AuthContext.jsx  #   Server URL configuration
 │   │   │   ├── UserContext.jsx  #   Auth state + session management
-│   │   │   └── ShopContext.jsx  #   Products, cart, search state
+│   │   │   ├── ShopContext.jsx  #   Products, cart, search state
+│   │   │   └── WishlistContext.jsx # Global wishlist Set state management
 │   │   └── index.css            # Global styles & Tailwind config
 │   └── package.json
 │
@@ -346,9 +360,11 @@ Trendies/
 │   ├── model/
 │   │   ├── userModel.js         #   User schema
 │   │   ├── productModel.js      #   Product schema
-│   │   └── orderModel.js        #   Order schema
+│   │   ├── orderModel.js        #   Order schema
+│   │   └── wishlistModel.js     #   Wishlist schema with compound unique constraints
 │   ├── controller/
 │   │   ├── authController.js    #   Login, register, logout, OAuth
+│   │   ├── wishlistController.js#   Toggle and get wishlist items
 │   │   ├── productController.js #   CRUD product operations
 │   │   ├── cartController.js    #   Cart operations
 │   │   ├── orderController.js   #   Order lifecycle + Razorpay
@@ -362,6 +378,8 @@ Trendies/
 │   │   ├── orderQueryService.js     # Order status lookup
 │   │   └── storeInfoService.js      # Store FAQ responses
 │   ├── routes/                  #   Express route definitions
+│   │   ├── wishlistRoute.js     #   Toggle and get wishlist API routes
+│   │   └── ...
 │   ├── app.js                   #   Server entry point
 │   └── package.json
 │
@@ -381,6 +399,7 @@ Trendies/
 | **CORS** | Whitelisted origins with `credentials: true` |
 | **Admin Isolation** | Separate JWT flow with environment-variable-based credentials |
 | **Input Validation** | Server-side email and password validation via `validator` library |
+| **Database Constraints** | Compound unique indexes preventing duplicate items in collections (e.g. Wishlist) |
 
 ---
 
@@ -388,7 +407,6 @@ Trendies/
 
 - [ ] AI-powered Virtual Try-On for clothing
 - [ ] AI-driven size recommendations based on user preferences
-- [ ] Wishlist functionality
 - [ ] Product reviews & ratings
 - [ ] Admin analytics dashboard with charts
 - [ ] Email notifications for order status changes
