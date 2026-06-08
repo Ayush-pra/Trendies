@@ -1,8 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useMemo } from 'react'
 import Title from '../components/Title';
 import { shopDataContext } from '../context/ShopContext';
 import Card from '../components/Card';
+import Pagination from '../components/Pagination';
 import { RxCross2 } from 'react-icons/rx';
+
+// Constants
+const PRODUCTS_PER_PAGE = 12;
 
 // Price range definitions for the price filter
 const PRICE_RANGES = [
@@ -20,6 +24,19 @@ const Collection = () => {
   const [subcategory, setSubcategory] = useState([]);
   const [priceRanges, setPriceRanges] = useState([]);
   const [sortType, setSortType] = useState("relavent");
+
+  // New state for pagination
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Mode Detection: Pagination Mode if search/filters are active, otherwise full catalog view
+  const isRefinedView = useMemo(() => {
+    return (
+      search.trim().length > 0 ||
+      category.length > 0 ||
+      subcategory.length > 0 ||
+      priceRanges.length > 0
+    );
+  }, [search, category, subcategory, priceRanges]);
 
   // Toggle category filter (controlled checkboxes)
   const toggleCategory = (value) => {
@@ -108,6 +125,39 @@ const Collection = () => {
   useEffect(() => {
     applyFilter();
   }, [category, subcategory, priceRanges, sortType, search, showSearch, products]);
+
+  // State Reset Rules: Reset page to 1 on filter, search, or sort type change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, category, subcategory, priceRanges, sortType]);
+
+  // Compute products to display: paginated slice when refined, otherwise complete list
+  const displayProducts = useMemo(() => {
+    if (isRefinedView) {
+      const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+      return filterProduct.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
+    }
+    return filterProduct;
+  }, [isRefinedView, filterProduct, currentPage]);
+
+  // Calculate total pages for pagination
+  const totalPages = useMemo(() => {
+    return Math.ceil(filterProduct.length / PRODUCTS_PER_PAGE);
+  }, [filterProduct.length]);
+
+  // Compute count text showing range description
+  const productCountText = useMemo(() => {
+    if (filterProduct.length === 0) {
+      return "Showing 0 Products";
+    }
+    if (isRefinedView) {
+      const start = (currentPage - 1) * PRODUCTS_PER_PAGE + 1;
+      const end = Math.min(currentPage * PRODUCTS_PER_PAGE, filterProduct.length);
+      return `Showing ${start}–${end} of ${filterProduct.length} Products`;
+    } else {
+      return `Showing ${filterProduct.length} Products`;
+    }
+  }, [isRefinedView, currentPage, filterProduct.length]);
 
   // Check if any filters are active (for showing filter chips section)
   const hasActiveFilters = category.length > 0 || subcategory.length > 0 || priceRanges.length > 0;
@@ -248,13 +298,13 @@ const Collection = () => {
 
         {/* Product Count */}
         <p className='text-gray-400 text-sm mb-4'>
-          Showing <span className='text-amber-400 font-semibold'>{filterProduct.length}</span> Products
+          {productCountText}
         </p>
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filterProduct.length > 0 ? (
-            filterProduct.map((item, index) => (
+          {displayProducts.length > 0 ? (
+            displayProducts.map((item, index) => (
               <Card
                 key={index}
                 id={item._id}
@@ -269,6 +319,15 @@ const Collection = () => {
             </div>
           )}
         </div>
+
+        {/* Pagination Footer (Pagination Mode) */}
+        {isRefinedView && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </div>
     </div>
   )
