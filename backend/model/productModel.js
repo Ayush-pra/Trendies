@@ -38,8 +38,10 @@ const productSchema = new mongoose.Schema({
         required:true
     },
     sizes:{
-        type:Array,
-        required:true
+        type:Map,
+        of:Number,
+        required:true,
+        default:{}
     },
     date:{
         type:Number,

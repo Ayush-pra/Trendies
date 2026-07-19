@@ -84,9 +84,11 @@ const List = () => {
                       ${item.price}
                     </p>
 
-                    {item.sizes?.length > 0 && (
+                    {item.sizes && (
                       <p className="text-sm text-gray-200">
-                        Sizes: {item.sizes.join(", ")}
+                        Sizes: {Array.isArray(item.sizes) 
+                          ? item.sizes.join(", ") 
+                          : Object.entries(item.sizes).map(([s, stock]) => `${s}(${stock})`).join(", ")}
                       </p>
                     )}
 

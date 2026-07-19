@@ -1,6 +1,7 @@
 const Order = require("../model/orderModel");
 const User = require("../model/userModel");
 const Razorpay = require('razorpay');
+const { reserveStock, releaseStock } = require("../services/stockService");
 
 const currency = 'inr'
 
@@ -11,10 +12,31 @@ const razorpayInstance = new Razorpay({
 
 const PlacedOrder = async (req, res) => {
     try {
-        const { items, amount, address } = req.body;
+        const { items, address } = req.body;
+        let { amount } = req.body;
         const userId = req.userId;
+
+        // Atomically reserve stock for all items
+        const stockResult = await reserveStock(items);
+        
+        if (!stockResult.success) {
+            return res.status(409).json({
+                message: "All items in your order are out of stock.",
+                failedItems: stockResult.failedItems
+            });
+        }
+
+        // Recalculate amount if some items failed
+        if (stockResult.failedItems.length > 0) {
+            let failedAmount = 0;
+            for (const item of stockResult.failedItems) {
+                failedAmount += (item.price * item.quantity);
+            }
+            amount -= failedAmount;
+        }
+
         const orderData = {
-            items,
+            items: stockResult.reservedItems,
             amount,
             userId,
             address,
@@ -22,11 +44,19 @@ const PlacedOrder = async (req, res) => {
             payment: false,
             date: Date.now()
         }
+
         const newOrder = new Order(orderData);
         await newOrder.save();
 
         await User.findByIdAndUpdate(userId, { cartData: {} });
-        return res.status(201).json({ message: 'Order Place' })
+        
+        let message = 'Order Placed';
+        if (stockResult.failedItems.length > 0) {
+            const failedNames = stockResult.failedItems.map(i => `${i.name} (Size: ${i.size})`).join(', ');
+            message = `Order placed. Note: ${failedNames} were removed as they are out of stock.`;
+        }
+
+        return res.status(201).json({ message, failedItems: stockResult.failedItems })
     }
     catch (error) {
         console.error("PlacedOrder Error:", error);
@@ -36,10 +66,31 @@ const PlacedOrder = async (req, res) => {
 
 const placeOrderRazorpay = async (req, res) => {
     try {
-        const { items, amount, address } = req.body;
+        const { items, address } = req.body;
+        let { amount } = req.body;
         const userId = req.userId;
+
+        // Atomically reserve stock for all items
+        const stockResult = await reserveStock(items);
+        
+        if (!stockResult.success) {
+            return res.status(409).json({
+                message: "All items in your order are out of stock.",
+                failedItems: stockResult.failedItems
+            });
+        }
+
+        // Recalculate amount if some items failed
+        if (stockResult.failedItems.length > 0) {
+            let failedAmount = 0;
+            for (const item of stockResult.failedItems) {
+                failedAmount += (item.price * item.quantity);
+            }
+            amount -= failedAmount;
+        }
+
         const orderData = {
-            items,
+            items: stockResult.reservedItems,
             amount,
             userId,
             address,
@@ -58,9 +109,12 @@ const placeOrderRazorpay = async (req, res) => {
         await razorpayInstance.orders.create(options, (error, order) => {
             if (error) {
                 console.error("placeOrderRazorpay callback Error:", error);
+                // Release stock since Razorpay order creation failed
+                releaseStock(stockResult.reservedItems);
                 return res.status(500).json(error);
             }
-            res.status(200).json(order);
+            // Send back failedItems so frontend can show the message BEFORE Razorpay opens, or along with it
+            res.status(200).json({ ...order, failedItems: stockResult.failedItems });
         })
     }
     catch (error) {
@@ -80,6 +134,11 @@ const verifyRazorpay = async (req, res) => {
             res.status(200).json({ message: 'Payment Successful' })
         }
         else{
+            // Payment failed — release the reserved stock
+            const order = await Order.findById(orderInfo.receipt);
+            if (order && order.items) {
+                await releaseStock(order.items);
+            }
             res.json({message:'Payment Failed'})
         }
     }
@@ -127,4 +186,5 @@ const updateStatus = async (req, res) => {
 }
 
 module.exports = { PlacedOrder, userOrders, allOrders, updateStatus, placeOrderRazorpay , verifyRazorpay };
+
 

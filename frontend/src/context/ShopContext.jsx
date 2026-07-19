@@ -59,7 +59,12 @@ const ShopContext = ({children}) => {
               await axios.post(serverUrl + "/api/cart/add", {itemId, size}, {withCredentials:true});
             }
             catch(error){
+              // Revert optimistic update if stock check failed
+              if (error.response?.status === 409) {
+                setcartItem(cartItem); // revert to previous cart state
+              }
               console.error("AddtoCart backend error:", error);
+              throw error; // re-throw so ProductDetail can handle it
             }
           }
     }

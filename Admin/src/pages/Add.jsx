@@ -17,10 +17,28 @@ const Add = () => {
   const [price, setprice] = useState("");
   const [SubCategory, setSubCategory] = useState("TopWear");
   const [bestseller, setbestseller] = useState(false);
-  const [sizes, setsizes] = useState([]);
+  // sizes is now an object: { S: 5, M: 3, XL: 0 }
+  const [sizes, setsizes] = useState({});
   const [loading, setloading] = useState(false);
 
   const { serverUrl } = useContext(authDataContext);
+
+  const toggleSize = (size) => {
+    setsizes(prev => {
+      const updated = { ...prev };
+      if (size in updated) {
+        delete updated[size];
+      } else {
+        updated[size] = 0; // default stock = 0
+      }
+      return updated;
+    });
+  };
+
+  const updateSizeStock = (size, value) => {
+    const stock = Math.max(0, parseInt(value) || 0);
+    setsizes(prev => ({ ...prev, [size]: stock }));
+  };
 
   const handleAddProduct = async (e) => {
     e.preventDefault();
@@ -33,6 +51,7 @@ const Add = () => {
       formData.append("category", category);
       formData.append("subCategory", SubCategory);
       formData.append("bestseller", bestseller);
+      // Send sizes as JSON object { S: 5, M: 3 }
       formData.append("sizes", JSON.stringify(sizes));
       if (image1) formData.append("image1", image1);
       if (image2) formData.append("image2", image2);
@@ -52,6 +71,7 @@ const Add = () => {
       setbestseller(false);
       setcategory("Men");
       setSubCategory("TopWear");
+      setsizes({});
     } catch (error) {
       toast.error("Product Add Failed");
     }
@@ -123,24 +143,45 @@ const Add = () => {
             onChange={(e) => setprice(e.target.value)}
             required
           />
-          <div className="flex flex-wrap gap-3">
-            {["S", "M", "L", "XL", "XXL"].map(size => (
-              <div
-                key={size}
-                onClick={() =>
-                  setsizes(prev =>
-                    prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
-                  )
-                }
-                className={`px-5 py-2 rounded-lg cursor-pointer border 
-                ${sizes.includes(size) ? "bg-green-600 text-black" : "bg-slate-600"}`}
-              >
-                {size}
+
+          {/* Size Selection with Per-Size Stock Input */}
+          <div>
+            <p className="text-lg font-semibold mb-3">Select Sizes & Stock</p>
+            <div className="flex flex-wrap gap-3 mb-4">
+              {["S", "M", "L", "XL", "XXL"].map(s => (
+                <div
+                  key={s}
+                  onClick={() => toggleSize(s)}
+                  className={`px-5 py-2 rounded-lg cursor-pointer border transition-all duration-200
+                  ${s in sizes ? "bg-green-600 text-black font-semibold" : "bg-slate-600"}`}
+                >
+                  {s}
+                </div>
+              ))}
+            </div>
+
+            {/* Stock inputs for selected sizes */}
+            {Object.keys(sizes).length > 0 && (
+              <div className="flex flex-wrap gap-4 bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+                {Object.entries(sizes).map(([s, stock]) => (
+                  <div key={s} className="flex items-center gap-2 bg-slate-700 rounded-lg px-4 py-2">
+                    <span className="font-semibold text-green-400 min-w-[30px]">{s}</span>
+                    <span className="text-gray-400 text-sm">Stock:</span>
+                    <input
+                      type="number"
+                      min="0"
+                      value={stock}
+                      onChange={(e) => updateSizeStock(s, e.target.value)}
+                      className="w-20 bg-slate-600 border border-slate-500 rounded-md px-2 py-1 text-center text-white focus:outline-none focus:border-green-400"
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
+
           <label className="flex items-center gap-3">
-            <input type="checkbox" onChange={() => setbestseller(!bestseller)} />
+            <input type="checkbox" checked={bestseller} onChange={() => setbestseller(!bestseller)} />
             Add to Bestseller
           </label>
           <button className="w-40 bg-blue-600 py-3 rounded-xl text-black font-semibold">
@@ -153,3 +194,4 @@ const Add = () => {
 };
 
 export default Add;
+

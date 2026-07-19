@@ -97,22 +97,73 @@ const PlaceOrder = () => {
     };
 
     if (method === "cod") {
-      await axios.post(
-        serverUrl + "/api/order/placeorder",
-        orderData,
-        { withCredentials: true }
-      );
-      setcartItem({});
-      navigate("/order");
+      try {
+        const response = await axios.post(
+          serverUrl + "/api/order/placeorder",
+          orderData,
+          { withCredentials: true }
+        );
+        if (response.data.failedItems && response.data.failedItems.length > 0) {
+          toast.warn(response.data.message);
+        } else {
+          toast.success(response.data.message);
+        }
+        setcartItem({});
+        navigate("/order");
+      } catch (err) {
+        if (err.response?.status === 409) {
+          toast.error(err.response.data.message);
+          if (err.response.data.failedItems) {
+            let updatedCart = structuredClone(cartItem);
+            err.response.data.failedItems.forEach((item) => {
+              if (updatedCart[item._id]) {
+                delete updatedCart[item._id][item.size];
+                if (Object.keys(updatedCart[item._id]).length === 0) {
+                  delete updatedCart[item._id];
+                }
+              }
+            });
+            setcartItem(updatedCart);
+          }
+        } else {
+          const msg = err.response?.data?.message || "Order failed. Please try again.";
+          toast.error(msg);
+        }
+      }
     }
 
     if (method === "razorpay") {
-      const res = await axios.post(
-        serverUrl + "/api/order/razorpay",
-        orderData,
-        { withCredentials: true }
-      );
-      initpay(res.data);
+      try {
+        const res = await axios.post(
+          serverUrl + "/api/order/razorpay",
+          orderData,
+          { withCredentials: true }
+        );
+        if (res.data.failedItems && res.data.failedItems.length > 0) {
+          const failedNames = res.data.failedItems.map(i => `${i.name} (Size: ${i.size})`).join(', ');
+          toast.warn(`Note: ${failedNames} were removed as they are out of stock.`);
+        }
+        initpay(res.data);
+      } catch (err) {
+        if (err.response?.status === 409) {
+          toast.error(err.response.data.message);
+          if (err.response.data.failedItems) {
+            let updatedCart = structuredClone(cartItem);
+            err.response.data.failedItems.forEach((item) => {
+              if (updatedCart[item._id]) {
+                delete updatedCart[item._id][item.size];
+                if (Object.keys(updatedCart[item._id]).length === 0) {
+                  delete updatedCart[item._id];
+                }
+              }
+            });
+            setcartItem(updatedCart);
+          }
+        } else {
+          const msg = err.response?.data?.message || "Order failed. Please try again.";
+          toast.error(msg);
+        }
+      }
     }
   };
 

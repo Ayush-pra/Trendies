@@ -1,8 +1,22 @@
 const User = require("../model/userModel");
+const Product = require("../model/productModel");
 
 const addToCart = async (req, res)=>{
     try{
         const {itemId, size} = req.body;
+
+        // Soft stock check — prevents adding out-of-stock items (UX convenience)
+        const product = await Product.findById(itemId).lean();
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        const sizeStock = product.sizes instanceof Map
+            ? product.sizes.get(size)
+            : product.sizes?.[size];
+        if (sizeStock === undefined || sizeStock < 1) {
+            return res.status(409).json({ message: `Size ${size} is out of stock` });
+        }
+
         const userData = await User.findById(req.userId);
         if(!userData){
             return res.status(404).json({message:"User not Found"});
