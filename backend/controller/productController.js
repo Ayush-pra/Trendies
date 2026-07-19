@@ -26,8 +26,8 @@ const addProduct = async (req, res) => {
       name,
       description,
       price: Number(price),
-      category,
-      subCategory,
+      category: JSON.parse(category),
+      subCategory: JSON.parse(subCategory),
       sizes: JSON.parse(sizes),
       bestseller: bestseller === "true",
       date: Date.now(),
@@ -95,11 +95,33 @@ const removeproduct = async (req, res) => {
   }
 };
 
+const updateStock = async (req, res) => {
+  try {
+    const { productId, sizes } = req.body;
+    if (!productId || !sizes) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+    const product = await Product.findByIdAndUpdate(
+      productId,
+      { sizes },
+      { new: true }
+    );
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    return res.status(200).json({ message: "Stock updated", product });
+  } catch (error) {
+    console.error("Update stock error:", error);
+    return res.status(500).json({ message: "Update stock failed" });
+  }
+};
+
 module.exports = {
   addProduct,
   removeproduct,
   listproduct,
-  getSingleProduct
+  getSingleProduct,
+  updateStock
 };
 
 

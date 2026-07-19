@@ -109,19 +109,26 @@ const Collection = () => {
 
     // 2. Category Filter (AND logic with case-insensitive check)
     if (category.length > 0) {
-      productCopy = productCopy.filter(item =>
-        item.category && category.some(cat => cat.toLowerCase() === item.category.toLowerCase().trim())
-      );
+      productCopy = productCopy.filter(item => {
+        if (!item.category) return false;
+        const itemCats = Array.isArray(item.category) ? item.category : [item.category];
+        return itemCats.some(itemCat => 
+          category.some(cat => cat.toLowerCase() === itemCat.toLowerCase().trim())
+        );
+      });
     }
 
     // 3. SubCategory Filter (AND logic with space-insensitive & case-insensitive check)
     if (subcategory.length > 0) {
       productCopy = productCopy.filter(item => {
         if (!item.subCategory) return false;
-        const normalizedItemSub = item.subCategory.toLowerCase().replace(/\s+/g, "");
-        return subcategory.some(sub =>
-          sub.toLowerCase().replace(/\s+/g, "") === normalizedItemSub
-        );
+        const itemSubs = Array.isArray(item.subCategory) ? item.subCategory : [item.subCategory];
+        return itemSubs.some(itemSub => {
+          const normalizedItemSub = itemSub.toLowerCase().replace(/\s+/g, "");
+          return subcategory.some(sub =>
+            sub.toLowerCase().replace(/\s+/g, "") === normalizedItemSub
+          );
+        });
       });
     }
 

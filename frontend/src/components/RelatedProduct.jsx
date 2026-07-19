@@ -10,8 +10,18 @@ const RelatedProduct = ({category, subCategory, currentProductId}) => {
     useEffect(()=>{
         if(products.length>0){
             let productCopy = products.slice();
-            productCopy=productCopy.filter((item)=> category===item.category);
-            productCopy=productCopy.filter((item)=>subCategory===item.subCategory);
+            // Handle arrays or strings for related categories
+            const matchCategories = Array.isArray(category) ? category : [category];
+            const matchSubCategories = Array.isArray(subCategory) ? subCategory : [subCategory];
+
+            productCopy=productCopy.filter((item)=> {
+                const itemCats = Array.isArray(item.category) ? item.category : [item.category];
+                return itemCats.some(c => matchCategories.includes(c));
+            });
+            productCopy=productCopy.filter((item)=> {
+                const itemSubs = Array.isArray(item.subCategory) ? item.subCategory : [item.subCategory];
+                return itemSubs.some(s => matchSubCategories.includes(s));
+            });
             productCopy=productCopy.filter((item)=>currentProductId!==item._id);
             setrelated(productCopy.slice(0,4));
         }
