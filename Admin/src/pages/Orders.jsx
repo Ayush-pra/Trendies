@@ -63,7 +63,7 @@ const Orders = () => {
                     <FiCalendar /> {new Date(item.date).toLocaleDateString()}
                   </p>
                   <p className='text-2xl font-bold text-green-400 flex items-center justify-end gap-1'>
-                    <FiDollarSign />{item.amount}
+                    ₹ {item.amount}
                   </p>
                 </div>
               </div>

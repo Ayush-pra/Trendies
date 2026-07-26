@@ -90,7 +90,7 @@ const List = () => {
         <h1 className="text-3xl md:text-4xl font-bold border-b-2 border-[#46d1f7] pb-2 inline-block self-start">
           Inventory List
         </h1>
-        
+
         <div className="flex flex-col gap-4">
           {list?.length > 0 ? (
             list.map((item, index) => (
@@ -114,7 +114,7 @@ const List = () => {
 
                     <div className="flex flex-wrap gap-x-4 gap-y-1">
                       <p className="text-sm font-bold text-green-400">
-                        ${item.price}
+                        ₹{item.price}
                       </p>
                       {item.category && (
                         <p className="text-sm text-gray-400">
@@ -149,14 +149,14 @@ const List = () => {
                             ))}
                           </div>
                           <div className="flex gap-2 mt-2">
-                            <button 
+                            <button
                               onClick={() => saveStock(item._id)}
                               disabled={savingStock}
                               className="bg-green-600 hover:bg-green-500 text-white text-sm px-4 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
                             >
                               <RiCheckLine /> {savingStock ? 'Saving...' : 'Save'}
                             </button>
-                            <button 
+                            <button
                               onClick={handleCancelEdit}
                               className="bg-gray-600 hover:bg-gray-500 text-white text-sm px-4 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
                             >
@@ -177,7 +177,7 @@ const List = () => {
                               <span className="text-gray-500 italic">No stock data (Legacy)</span>
                             )}
                           </p>
-                          <button 
+                          <button
                             onClick={() => handleEditClick(item)}
                             className="text-amber-400 hover:text-amber-300 text-sm flex items-center gap-1 transition-colors bg-amber-400/10 px-3 py-1.5 rounded-lg"
                           >

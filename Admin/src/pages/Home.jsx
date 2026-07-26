@@ -57,7 +57,7 @@ const Home = () => {
   }, []);
 
   const statCards = [
-    { title: "Total Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: <FiDollarSign size={24} />, color: "text-green-400", bg: "bg-green-400/10" },
+    { title: "Total Revenue", value: `₹${stats.totalRevenue.toLocaleString()}`, icon: <FiDollarSign size={24} />, color: "text-green-400", bg: "bg-green-400/10" },
     { title: "Total Orders", value: stats.totalOrders, icon: <FiShoppingBag size={24} />, color: "text-blue-400", bg: "bg-blue-400/10" },
     { title: "Total Products", value: stats.totalProducts, icon: <FiPackage size={24} />, color: "text-amber-400", bg: "bg-amber-400/10" },
     { title: "Pending Orders", value: stats.pendingOrders, icon: <FiTrendingUp size={24} />, color: "text-purple-400", bg: "bg-purple-400/10" }
@@ -114,7 +114,7 @@ const Home = () => {
                         <p className="text-xs text-gray-400">{order.address?.email}</p>
                       </td>
                       <td className="p-4 text-sm text-gray-300">{order.items?.length || 0} items</td>
-                      <td className="p-4 text-sm font-bold text-green-400">${order.amount}</td>
+                      <td className="p-4 text-sm font-bold text-green-400">₹{order.amount}</td>
                       <td className="p-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                           order.status === 'Delivered' ? 'bg-green-500/20 text-green-400' :

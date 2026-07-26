@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 
 const PlaceOrder = () => {
   const [method, setmethod] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { serverUrl } = useContext(authDataContext);
   const { userData, authLoading } = useContext(userDataContext);
   const navigate = useNavigate();
@@ -70,10 +71,14 @@ const PlaceOrder = () => {
   const onSubmithandler = async (e) => {
     e.preventDefault();
 
+    if (isLoading) return;
+
     if (!method) {
       toast.warn("Please select a payment method");
       return;
     }
+
+    setIsLoading(true);
 
     let orderItems = [];
 
@@ -109,8 +114,10 @@ const PlaceOrder = () => {
           toast.success(response.data.message);
         }
         setcartItem({});
+        setIsLoading(false);
         navigate("/order");
       } catch (err) {
+        setIsLoading(false);
         if (err.response?.status === 409) {
           toast.error(err.response.data.message);
           if (err.response.data.failedItems) {
@@ -143,8 +150,10 @@ const PlaceOrder = () => {
           const failedNames = res.data.failedItems.map(i => `${i.name} (Size: ${i.size})`).join(', ');
           toast.warn(`Note: ${failedNames} were removed as they are out of stock.`);
         }
+        setIsLoading(false);
         initpay(res.data);
       } catch (err) {
+        setIsLoading(false);
         if (err.response?.status === 409) {
           toast.error(err.response.data.message);
           if (err.response.data.failedItems) {
@@ -223,8 +232,8 @@ const PlaceOrder = () => {
             </div>
           </div>
 
-          <button type="submit" className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold text-sm sm:text-base mt-6">
-            Place Order
+          <button type="submit" disabled={isLoading} className={`w-full py-3.5 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold text-sm sm:text-base mt-6 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            {isLoading ? 'Placing Order...' : 'Place Order'}
           </button>
         </div>
 
