@@ -158,7 +158,7 @@ const Add = () => {
           <input
             type="number"
             className="w-full sm:w-1/2 h-12 bg-zinc-900/80 border border-white/10 rounded-xl px-4 text-lg focus:outline-none focus:border-blue-400"
-            placeholder="Price ($)"
+            placeholder="Price (₹)"
             value={price}
             onChange={(e) => setprice(e.target.value)}
             required
