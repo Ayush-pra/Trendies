@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { authDataContext } from "./AuthContext";
 import { userDataContext } from "./UserContext";
 import axios from "axios";
+import { toast } from 'react-toastify';
 
 export const wishlistDataContext = createContext();
 
@@ -49,8 +50,10 @@ const WishlistContext = ({ children }) => {
         const updated = new Set(prev);
         if (result.data.wishlisted) {
           updated.add(productId);
+          toast.success("Added to Wishlist", { icon: "❤️" });
         } else {
           updated.delete(productId);
+          toast.info("Removed from Wishlist", { icon: "💔" });
         }
         return updated;
       });

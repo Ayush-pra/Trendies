@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import { authDataContext } from '../../context/AuthContext';
 import axios from 'axios';
 import { FiBox, FiUser, FiMapPin, FiCalendar, FiDollarSign } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -23,9 +24,11 @@ const Orders = () => {
       const result = await axios.post(serverUrl + '/api/order/status', { orderId, status: e.target.value }, { withCredentials: true });
       if (result.data) {
         await fetchOrders();
+        toast.success(`Order status updated to ${e.target.value}`, { icon: "🚀" });
       }
     } catch (error) {
       console.error("statusHandle error:", error);
+      toast.error("Failed to update order status");
     }
   };
 

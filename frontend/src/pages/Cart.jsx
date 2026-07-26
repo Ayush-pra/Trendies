@@ -5,6 +5,7 @@ import { userDataContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 import { RiDeleteBin6Line } from "react-icons/ri";
 import CartTotal from '../components/CartTotal';
+import { toast } from 'react-toastify';
 
 const Cart = () => {
     const { products, currency, cartItem, updateQuantity } = useContext(shopDataContext);
@@ -68,7 +69,7 @@ const Cart = () => {
                                                 </div>
                                             </div>
                                             <input type='number' min={1} defaultValue={item.quantity} className='w-12 sm:w-16 py-1.5 px-2 text-white text-sm sm:text-[18px] font-semibold bg-green-800 border border-sky-300 rounded-md text-center flex-shrink-0' onChange={(e) => e.target.value === ' ' || e.target.value === '0' ? null : updateQuantity(item._id, item.size, Number(e.target.value))} />
-                                            <RiDeleteBin6Line className='text-sky-300 w-5 h-5 sm:w-[25px] sm:h-[25px] cursor-pointer flex-shrink-0' onClick={() => updateQuantity(item._id, item.size, 0)} />
+                                            <RiDeleteBin6Line className='text-sky-300 w-5 h-5 sm:w-[25px] sm:h-[25px] cursor-pointer flex-shrink-0' onClick={() => { updateQuantity(item._id, item.size, 0); toast.info("Item removed from cart"); }} />
                                         </div>
                                     </div>
                                 )

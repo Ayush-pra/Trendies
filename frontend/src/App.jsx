@@ -43,7 +43,18 @@ const App = () => {
     <>
     <SplashScreen/>
     {!hideNavbarPaths.includes(location.pathname) && <Navbar />}
-    <ToastContainer position="top-right" autoClose={3000} />
+    <ToastContainer 
+      position="bottom-right" 
+      autoClose={3000} 
+      hideProgressBar={false} 
+      newestOnTop={true} 
+      closeOnClick 
+      rtl={false} 
+      pauseOnFocusLoss 
+      draggable 
+      pauseOnHover 
+      theme="dark" 
+    />
    <Routes>
       <Route path='/' element={<Home/>}/>
       <Route path='/registration' element={<Registration/>}/>

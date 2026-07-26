@@ -14,7 +14,18 @@ const App = () => {
   const location = useLocation();
   return (
     <>
-    <ToastContainer />
+    <ToastContainer 
+      position="bottom-right" 
+      autoClose={3000} 
+      hideProgressBar={false} 
+      newestOnTop={true} 
+      closeOnClick 
+      rtl={false} 
+      pauseOnFocusLoss 
+      draggable 
+      pauseOnHover 
+      theme="dark" 
+    />
     {!adminData ? <Login/> : <>
       <Routes>
         <Route path='/' element={<Home/>}/>

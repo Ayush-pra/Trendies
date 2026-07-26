@@ -5,6 +5,7 @@ import axios from "axios";
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../../utils/Firebase';
 import { userDataContext } from '../context/UserContext';
+import { toast } from 'react-toastify';
 
 const Registration = () => {
     const {serverUrl} = useContext(authDataContext);
@@ -21,11 +22,12 @@ const Registration = () => {
             }, {withCredentials:true});
             // getCurrentUser();
             await getCurrentUser();
+            toast.success("Account Created Successfully");
             navigate("/");
         }
         catch (error) {
           console.error("signup error:", error.response?.data || error.message);
-          alert(error.response?.data?.message);
+          toast.error(error.response?.data?.message || "Registration failed");
         };
     }
 
@@ -40,10 +42,12 @@ const Registration = () => {
                 name,email
             }, {withCredentials:true});
             await getCurrentUser();
+            toast.success("Account Created Successfully");
             navigate("/");
         }
         catch (error) {
             console.error("Google Login error:", error);
+            toast.error("Google sign-in failed");
         }
     }
 
