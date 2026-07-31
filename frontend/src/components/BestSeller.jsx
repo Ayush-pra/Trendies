@@ -1,16 +1,26 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Title from './Title';
-import { shopDataContext } from '../context/ShopContext';
-import Card from './Card';
+import { authDataContext } from '../context/AuthContext';
 import Card1 from './Card1';
+import axios from 'axios';
 
 const BestSeller = () => {
-  const { products } = useContext(shopDataContext);
+  const { serverUrl } = useContext(authDataContext);
   const [bestSeller, setbestSeller] = useState([]);
+  
   useEffect(() => {
-    const filterproduct = products.filter((item) => item.bestseller);
-    setbestSeller(filterproduct.slice(0, 4));
-  }, [products])
+    const fetchBestSellers = async () => {
+      try {
+        const response = await axios.get(`${serverUrl}/api/product/catalog?bestseller=true&limit=4`);
+        if (response.data.success) {
+          setbestSeller(response.data.products);
+        }
+      } catch (error) {
+        console.error("Error fetching bestseller products:", error);
+      }
+    };
+    fetchBestSellers();
+  }, [serverUrl]);
   return (
     <div>
       <div className='h-[8%] w-[100%] text-center mt-[50px]'>

@@ -8,7 +8,7 @@ import CartTotal from '../components/CartTotal';
 import { toast } from 'react-toastify';
 
 const Cart = () => {
-    const { products, currency, cartItem, updateQuantity } = useContext(shopDataContext);
+    const { cartProducts, currency, cartItem, updateQuantity } = useContext(shopDataContext);
     const { userData, authLoading } = useContext(userDataContext);
     const [cartData, setcartData] = useState([]);
     const navigate = useNavigate();
@@ -56,7 +56,8 @@ const Cart = () => {
                     <div className='w-full space-y-3'>
                         {
                             cartData.map((item, index) => {
-                                const productData = products.find((product) => product._id === item._id);
+                                const productData = cartProducts.find((product) => product._id === item._id);
+                                if (!productData) return null; // Wait for product data to load
                                 return (
                                     <div key={index} className='border-t border-b'>
                                         <div className='w-full flex items-center gap-3 sm:gap-6 bg-zinc-800 py-3 px-3 sm:px-5 rounded-2xl'>

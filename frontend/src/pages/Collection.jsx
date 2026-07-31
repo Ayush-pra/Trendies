@@ -1,9 +1,12 @@
 import React, { useContext, useEffect, useState, useMemo, useRef } from 'react'
 import Title from '../components/Title';
 import { shopDataContext } from '../context/ShopContext';
+import { authDataContext } from '../context/AuthContext';
 import Card from '../components/Card';
 import Pagination from '../components/Pagination';
 import { RxCross2 } from 'react-icons/rx';
+import axios from 'axios';
+import Loading from '../components/Loading';
 
 // Constants
 const PRODUCTS_PER_PAGE = 12;
@@ -18,15 +21,19 @@ const PRICE_RANGES = [
 
 const Collection = () => {
   const [showFilter, setShowFilter] = useState(false);
-  const { products, search, showSearch } = useContext(shopDataContext);
+  const { search, showSearch } = useContext(shopDataContext);
+  const { serverUrl } = useContext(authDataContext);
+  
   const [filterProduct, setFilterProduct] = useState([]);
   const [category, setCategory] = useState([]);
   const [subcategory, setSubcategory] = useState([]);
   const [priceRanges, setPriceRanges] = useState([]);
   const [sortType, setSortType] = useState("relavent");
-
-  // New state for pagination
+  
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Custom sort dropdown state and ref
   const [isSortOpen, setIsSortOpen] = useState(false);
@@ -48,16 +55,6 @@ const Collection = () => {
     "low-high": "Sort By: Low to High",
     "high-low": "Sort By: High to Low",
   };
-
-  // Mode Detection: Pagination Mode if search/filters are active, otherwise full catalog view
-  const isRefinedView = useMemo(() => {
-    return (
-      search.trim().length > 0 ||
-      category.length > 0 ||
-      subcategory.length > 0 ||
-      priceRanges.length > 0
-    );
-  }, [search, category, subcategory, priceRanges]);
 
   // Toggle category filter (controlled checkboxes)
   const toggleCategory = (value) => {
@@ -97,95 +94,48 @@ const Collection = () => {
     }
   };
 
-  const applyFilter = () => {
-    let productCopy = products.slice();
+  const fetchFilteredProducts = async () => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.append('page', currentPage);
+      params.append('limit', PRODUCTS_PER_PAGE);
+      if (showSearch && search) params.append('search', search);
+      if (category.length > 0) params.append('category', category.join(','));
+      if (subcategory.length > 0) params.append('subcategory', subcategory.join(','));
+      if (priceRanges.length > 0) params.append('priceRanges', priceRanges.join(','));
+      if (sortType) params.append('sort', sortType);
 
-    // 1. Search Filter (AND logic)
-    if (showSearch && search) {
-      productCopy = productCopy.filter(item =>
-        item.name && item.name.toLowerCase().includes(search.toLowerCase().trim())
-      );
+      const response = await axios.get(`${serverUrl}/api/product/catalog?${params.toString()}`);
+      if (response.data.success) {
+        setFilterProduct(response.data.products);
+        setTotalPages(response.data.totalPages);
+        setTotalCount(response.data.totalCount);
+      }
+    } catch (error) {
+      console.error("Error fetching filtered products:", error);
     }
-
-    // 2. Category Filter (AND logic with case-insensitive check)
-    if (category.length > 0) {
-      productCopy = productCopy.filter(item => {
-        if (!item.category) return false;
-        const itemCats = Array.isArray(item.category) ? item.category : [item.category];
-        return itemCats.some(itemCat => 
-          category.some(cat => cat.toLowerCase() === itemCat.toLowerCase().trim())
-        );
-      });
-    }
-
-    // 3. SubCategory Filter (AND logic with space-insensitive & case-insensitive check)
-    if (subcategory.length > 0) {
-      productCopy = productCopy.filter(item => {
-        if (!item.subCategory) return false;
-        const itemSubs = Array.isArray(item.subCategory) ? item.subCategory : [item.subCategory];
-        return itemSubs.some(itemSub => {
-          const normalizedItemSub = itemSub.toLowerCase().replace(/\s+/g, "");
-          return subcategory.some(sub =>
-            sub.toLowerCase().replace(/\s+/g, "") === normalizedItemSub
-          );
-        });
-      });
-    }
-
-    // 4. Price Range Filter (OR logic within selected ranges)
-    if (priceRanges.length > 0) {
-      const selectedRanges = PRICE_RANGES.filter(r => priceRanges.includes(r.key));
-      productCopy = productCopy.filter(item =>
-        selectedRanges.some(range => item.price >= range.min && item.price < range.max)
-      );
-    }
-
-    // 5. Sorting logic
-    if (sortType === "low-high") {
-      productCopy.sort((a, b) => a.price - b.price);
-    } else if (sortType === "high-low") {
-      productCopy.sort((a, b) => b.price - a.price);
-    }
-
-    setFilterProduct(productCopy);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    applyFilter();
-  }, [category, subcategory, priceRanges, sortType, search, showSearch, products]);
+    fetchFilteredProducts();
+  }, [category, subcategory, priceRanges, sortType, search, showSearch, currentPage]);
 
   // State Reset Rules: Reset page to 1 on filter, search, or sort type change
   useEffect(() => {
     setCurrentPage(1);
   }, [search, category, subcategory, priceRanges, sortType]);
 
-  // Compute products to display: paginated slice when refined, otherwise complete list
-  const displayProducts = useMemo(() => {
-    if (isRefinedView) {
-      const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
-      return filterProduct.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
-    }
-    return filterProduct;
-  }, [isRefinedView, filterProduct, currentPage]);
-
-  // Calculate total pages for pagination
-  const totalPages = useMemo(() => {
-    return Math.ceil(filterProduct.length / PRODUCTS_PER_PAGE);
-  }, [filterProduct.length]);
-
   // Compute count text showing range description
   const productCountText = useMemo(() => {
-    if (filterProduct.length === 0) {
+    if (totalCount === 0) {
       return "Showing 0 Products";
     }
-    if (isRefinedView) {
-      const start = (currentPage - 1) * PRODUCTS_PER_PAGE + 1;
-      const end = Math.min(currentPage * PRODUCTS_PER_PAGE, filterProduct.length);
-      return `Showing ${start}–${end} of ${filterProduct.length} Products`;
-    } else {
-      return `Showing ${filterProduct.length} Products`;
-    }
-  }, [isRefinedView, currentPage, filterProduct.length]);
+    const start = (currentPage - 1) * PRODUCTS_PER_PAGE + 1;
+    const end = Math.min(currentPage * PRODUCTS_PER_PAGE, totalCount);
+    return `Showing ${start}–${end} of ${totalCount} Products`;
+  }, [currentPage, totalCount]);
 
   // Check if any filters are active (for showing filter chips section)
   const hasActiveFilters = category.length > 0 || subcategory.length > 0 || priceRanges.length > 0;
@@ -368,26 +318,32 @@ const Collection = () => {
         </p>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-6">
-          {displayProducts.length > 0 ? (
-            displayProducts.map((item, index) => (
-              <Card
-                key={index}
-                id={item._id}
-                name={item.name}
-                price={item.price}
-                image={item.image1}
-              />
-            ))
-          ) : (
-            <div className="col-span-full text-center text-white py-12">
-              <p className="text-xl">No products found matching your filters.</p>
-            </div>
-          )}
-        </div>
+        {isLoading ? (
+          <div className="flex justify-center items-center py-12">
+            <Loading />
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-6">
+            {filterProduct.length > 0 ? (
+              filterProduct.map((item, index) => (
+                <Card
+                  key={index}
+                  id={item._id}
+                  name={item.name}
+                  price={item.price}
+                  image={item.image1}
+                />
+              ))
+            ) : (
+              <div className="col-span-full text-center text-white py-12">
+                <p className="text-xl">No products found matching your filters.</p>
+              </div>
+            )}
+          </div>
+        )}
 
-        {/* Pagination Footer (Pagination Mode) */}
-        {isRefinedView && (
+        {/* Pagination Footer */}
+        {totalPages > 1 && (
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

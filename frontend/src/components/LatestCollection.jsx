@@ -1,16 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Title from './Title'
-import Collection from '../pages/Collection'
-import { shopDataContext } from '../context/ShopContext'
-import Card from './Card'
+import { authDataContext } from '../context/AuthContext'
 import Card1 from './Card1'
+import axios from 'axios'
 
 const LatestCollection = () => {
-    const { products } = useContext(shopDataContext);
+    const { serverUrl } = useContext(authDataContext);
     const [latestproduct, setlatestproduct] = useState([]);
+    
     useEffect(() => {
-        setlatestproduct(products.slice(0, 8));
-    }, [products])
+        const fetchLatest = async () => {
+            try {
+                const response = await axios.get(`${serverUrl}/api/product/catalog?limit=8&sort=date-desc`);
+                if (response.data.success) {
+                    setlatestproduct(response.data.products);
+                }
+            } catch (error) {
+                console.error("Error fetching latest products:", error);
+            }
+        };
+        fetchLatest();
+    }, [serverUrl]);
     return (
         <div>
             <div className='h-[15%] w-[100%] text-center md:mt-[50px]'><Title text1={"Latest"} text2={"Collections"} />
