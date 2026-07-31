@@ -14,6 +14,7 @@ const orderRoute = require("./routes/orderRoute");
 const tryonRoute = require("./routes/tryonRoute");
 const chatRoute = require("./routes/chatRoute");
 const wishlistRoute = require("./routes/wishlistRoute");
+const webhookRoute = require("./routes/webhookRoute");
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use("/api/order", orderRoute);
 app.use("/api/tryon", tryonRoute);
 app.use("/api/chat", chatRoute);
 app.use("/api/wishlist", wishlistRoute);
+app.use("/api/webhooks", webhookRoute);
 
 app.get("/", (req, res) => {
   res.send("Server running 🚀");
