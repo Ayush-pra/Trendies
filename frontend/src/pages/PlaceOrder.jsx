@@ -14,7 +14,7 @@ const PlaceOrder = () => {
   const { serverUrl } = useContext(authDataContext);
   const { userData, authLoading } = useContext(userDataContext);
   const navigate = useNavigate();
-  const { cartItem, setcartItem, getCartAmount, delivery_fee, products } =
+  const { cartItem, setcartItem, getCartAmount, delivery_fee, cartProducts } =
     useContext(shopDataContext);
 
   useEffect(() => {
@@ -85,9 +85,9 @@ const PlaceOrder = () => {
     for (const items in cartItem) {
       for (const item in cartItem[items]) {
         if (cartItem[items][item] > 0) {
-          const product = structuredClone(
-            products.find((p) => p._id === items)
-          );
+          const foundProduct = cartProducts.find((p) => p._id === items);
+          if (!foundProduct) continue;
+          const product = structuredClone(foundProduct);
           product.size = item;
           product.quantity = cartItem[items][item];
           orderItems.push(product);

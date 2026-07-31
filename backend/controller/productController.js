@@ -116,12 +116,113 @@ const updateStock = async (req, res) => {
   }
 };
 
+const catalogProducts = async (req, res) => {
+  try {
+    const {
+      page = 1,
+      limit = 12,
+      search = "",
+      category,
+      subcategory,
+      priceRanges,
+      sort,
+      bestseller
+    } = req.query;
+
+    const query = {};
+
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    if (category) {
+      const catArray = Array.isArray(category) ? category : category.split(",");
+      query.category = { $in: catArray.map(c => new RegExp(`^${c}$`, "i")) };
+    }
+
+    if (subcategory) {
+      const subArray = Array.isArray(subcategory) ? subcategory : subcategory.split(",");
+      query.subCategory = { $in: subArray.map(s => new RegExp(`^${s}$`, "i")) };
+    }
+
+    if (bestseller) {
+      query.bestseller = bestseller === "true";
+    }
+
+    if (priceRanges) {
+      const ranges = Array.isArray(priceRanges) ? priceRanges : priceRanges.split(",");
+      const orConditions = ranges.map(range => {
+        const [min, max] = range.split("-");
+        const maxVal = max === "+" ? Infinity : Number(max);
+        return { price: { $gte: Number(min), $lt: maxVal === Infinity ? 999999999 : maxVal } };
+      });
+      if (orConditions.length > 0) {
+        query.$or = orConditions;
+      }
+    }
+
+    let sortOption = {};
+    if (sort === "low-high") {
+      sortOption.price = 1;
+    } else if (sort === "high-low") {
+      sortOption.price = -1;
+    } else if (sort === "date-desc") {
+      sortOption.date = -1;
+    } else {
+      sortOption._id = -1;
+    }
+
+    const pageNumber = parseInt(page);
+    const pageSize = parseInt(limit);
+    const skip = (pageNumber - 1) * pageSize;
+
+    const [products, totalCount] = await Promise.all([
+      Product.find(query)
+        .select('name price image1 image2 image3 image4 category subCategory sizes bestseller description date')
+        .sort(sortOption)
+        .skip(skip)
+        .limit(pageSize)
+        .lean(),
+      Product.countDocuments(query)
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      products,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: pageNumber,
+      totalCount
+    });
+  } catch (error) {
+    console.error("Catalog product error:", error);
+    return res.status(500).json({ success: false, message: "Catalog product failed" });
+  }
+};
+
+const getProductsByIds = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids)) {
+      return res.status(400).json({ success: false, message: "Invalid IDs array" });
+    }
+    const products = await Product.find({ _id: { $in: ids } })
+      .select('name price image1 sizes')
+      .lean();
+    return res.status(200).json({ success: true, products });
+  } catch (error) {
+    console.error("Get products by IDs error:", error);
+    return res.status(500).json({ success: false, message: "Get products by IDs failed" });
+  }
+};
+
 module.exports = {
   addProduct,
   removeproduct,
   listproduct,
   getSingleProduct,
-  updateStock
+  updateStock,
+  catalogProducts,
+  getProductsByIds
 };
 
 

@@ -20,9 +20,20 @@ const Navbar = () => {
     useContext(shopDataContext);
   const { wishlistIds } = useContext(wishlistDataContext);
 
+  const [localSearch, setLocalSearch] = useState(search);
   const [showProfile, setshowProfile] = useState(false);
   const [loading, setloading] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setsearch(localSearch);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [localSearch, setsearch]);
 
   const profileRef = useRef(null);
 
@@ -255,8 +266,8 @@ const Navbar = () => {
           <input
             type="text"
             placeholder="Search here..."
-            value={search}
-            onChange={(e) => setsearch(e.target.value)}
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
             className="
               w-[90%] md:w-[50%] h-12 rounded-full px-6
               bg-[#111827] text-gray-200

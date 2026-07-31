@@ -7,7 +7,8 @@ export const shopDataContext = createContext()
 
 const ShopContext = ({children}) => {
 
-    const [products, setproducts] = useState([]);
+    const [products, setproducts] = useState([]); // Deprecated: no longer fetches full catalog
+    const [cartProducts, setCartProducts] = useState([]); // Stores details for products currently in cart
     const [search, setsearch] = useState("");
     const [showSearch, setshowSearch] = useState(false);
     const {serverUrl} = useContext(authDataContext);
@@ -15,15 +16,31 @@ const ShopContext = ({children}) => {
     const {userData} = useContext(userDataContext);
     const currency="₹";
     const delivery_fee=5;
+
     const getProducts = async()=>{
-        try{
-            const result = await axios.get(serverUrl+"/api/product/list");
-            setproducts(result.data);
+        // Intentionally left empty as we no longer fetch the full catalog globally.
+        // Components should fetch their own data using /api/product/catalog
+    }
+
+    const fetchCartProducts = async () => {
+        const ids = Object.keys(cartItem);
+        if (ids.length === 0) {
+            setCartProducts([]);
+            return;
         }
-        catch(error){
-            console.error("getProducts error:", error);
+        try {
+            const response = await axios.post(serverUrl + "/api/product/by-ids", { ids });
+            if (response.data.success) {
+                setCartProducts(response.data.products);
+            }
+        } catch (error) {
+            console.error("fetchCartProducts error:", error);
         }
     }
+
+    useEffect(() => {
+        fetchCartProducts();
+    }, [cartItem]);
 
     const getUserCart = async()=>{
       try{
@@ -122,7 +139,8 @@ const ShopContext = ({children}) => {
     const getCartAmount = ()=>{
       let totalAmount = 0;
       for(const items in cartItem){
-        let itemInfo = products.find((product)=>product._id===items);
+        let itemInfo = cartProducts.find((product)=>product._id===items);
+        if (!itemInfo) continue;
         for(const item in cartItem[items]){
           try{
               if(cartItem[items][item]>0){
@@ -137,9 +155,7 @@ const ShopContext = ({children}) => {
       return totalAmount;
     }
 
-    useEffect(()=>{
-        getProducts();
-    }, []);
+    // Removed getProducts() on mount since we no longer want the full catalog.
 
     useEffect(() => {
       if (userData) {
@@ -150,7 +166,7 @@ const ShopContext = ({children}) => {
     }, [userData]);
 
     const value={
-        products, currency, delivery_fee, getProducts,search, setsearch,showSearch, setshowSearch, cartItem, AddtoCart, getCartCount, setcartItem, updateQuantity, getCartAmount
+        products, cartProducts, currency, delivery_fee, getProducts,search, setsearch,showSearch, setshowSearch, cartItem, AddtoCart, getCartCount, setcartItem, updateQuantity, getCartAmount
     }
   return (
       <shopDataContext.Provider value={value}>

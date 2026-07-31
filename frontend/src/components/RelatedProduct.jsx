@@ -1,31 +1,38 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { shopDataContext } from '../context/ShopContext'
+import { authDataContext } from '../context/AuthContext'
 import Title from './Title';
 import Card1 from './Card1';
-import Card from './Card';
+import axios from 'axios';
 
 const RelatedProduct = ({category, subCategory, currentProductId}) => {
-    const {products} = useContext(shopDataContext);
+    const { serverUrl } = useContext(authDataContext);
     const [related, setrelated] = useState([]);
+    
     useEffect(()=>{
-        if(products.length>0){
-            let productCopy = products.slice();
-            // Handle arrays or strings for related categories
-            const matchCategories = Array.isArray(category) ? category : [category];
-            const matchSubCategories = Array.isArray(subCategory) ? subCategory : [subCategory];
+        const fetchRelated = async () => {
+            try {
+                const params = new URLSearchParams();
+                if (category) {
+                    const matchCategories = Array.isArray(category) ? category : [category];
+                    params.append('category', matchCategories.join(','));
+                }
+                if (subCategory) {
+                    const matchSubCategories = Array.isArray(subCategory) ? subCategory : [subCategory];
+                    params.append('subcategory', matchSubCategories.join(','));
+                }
+                params.append('limit', 5);
 
-            productCopy=productCopy.filter((item)=> {
-                const itemCats = Array.isArray(item.category) ? item.category : [item.category];
-                return itemCats.some(c => matchCategories.includes(c));
-            });
-            productCopy=productCopy.filter((item)=> {
-                const itemSubs = Array.isArray(item.subCategory) ? item.subCategory : [item.subCategory];
-                return itemSubs.some(s => matchSubCategories.includes(s));
-            });
-            productCopy=productCopy.filter((item)=>currentProductId!==item._id);
-            setrelated(productCopy.slice(0,4));
-        }
-    }, [products, category, subCategory, currentProductId]);
+                const response = await axios.get(`${serverUrl}/api/product/catalog?${params.toString()}`);
+                if (response.data.success) {
+                    const filtered = response.data.products.filter(item => item._id !== currentProductId);
+                    setrelated(filtered.slice(0, 4));
+                }
+            } catch (error) {
+                console.error("Error fetching related products:", error);
+            }
+        };
+        fetchRelated();
+    }, [category, subCategory, currentProductId, serverUrl]);
   return (
     <div className='my-[130px] md:my-[40px] md:px-[60px]'>
         <div className='w-[100%] mt-[30px] flex items-center justify-start flex-wrap gap-[30px]'>
