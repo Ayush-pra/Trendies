@@ -94,17 +94,26 @@ const Order = () => {
 
               {/* Status & Track — inline on mobile */}
               <div className="flex items-center justify-between pt-1 sm:pt-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                  <span className="text-xs text-white">{item.status}</span>
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${item.status === 'Payment Failed' ? 'bg-red-500' : 'bg-green-500'}`}></span>
+                    <span className={`text-xs ${item.status === 'Payment Failed' ? 'text-red-400' : 'text-white'}`}>{item.status}</span>
+                  </div>
+                  {item.status === 'Payment Failed' && (
+                    <p className="text-[10px] sm:text-xs text-gray-500 ml-3.5">
+                      Your payment was declined. No amount was charged.
+                    </p>
+                  )}
                 </div>
 
-                <button
-                  className="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-500 cursor-pointer text-white text-xs sm:text-sm rounded-md hover:bg-[#1b2a2a] transition"
-                  onClick={loadOrderedData}
-                >
-                  Track Order
-                </button>
+                {item.status !== 'Payment Failed' && (
+                  <button
+                    className="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-500 cursor-pointer text-white text-xs sm:text-sm rounded-md hover:bg-[#1b2a2a] transition"
+                    onClick={loadOrderedData}
+                  >
+                    Track Order
+                  </button>
+                )}
               </div>
             </div>
           </div>

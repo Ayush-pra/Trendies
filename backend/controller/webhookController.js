@@ -87,8 +87,11 @@ const razorpayWebhook = async (req, res) => {
                 // Release stock back to inventory since payment failed
                 if (order.items && order.items.length > 0) {
                     await releaseStock(order.items);
-                    console.log(`Webhook: Stock released for failed order ${mongoOrderId}`);
                 }
+
+                // Update order status so the user sees a clear "Payment Failed" on their Orders page
+                await Order.findByIdAndUpdate(mongoOrderId, { status: "Payment Failed" });
+                console.log(`Webhook: Order ${mongoOrderId} marked as Payment Failed, stock released`);
             }
         }
 
