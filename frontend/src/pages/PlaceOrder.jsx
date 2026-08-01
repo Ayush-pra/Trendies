@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import Title from "../components/Title";
 import CartTotal from "../components/CartTotal";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,10 @@ const PlaceOrder = () => {
   const navigate = useNavigate();
   const { cartItem, setcartItem, getCartAmount, delivery_fee, cartProducts } =
     useContext(shopDataContext);
+
+  // Generate idempotency key once when the checkout page loads.
+  // useRef ensures it survives re-renders but does NOT regenerate on every click.
+  const idempotencyKeyRef = useRef(crypto.randomUUID());
 
   useEffect(() => {
     if (!authLoading && !userData) {
@@ -57,6 +61,24 @@ const PlaceOrder = () => {
           navigate("/order");
           setcartItem({});
         }
+      },
+      modal: {
+        ondismiss: async () => {
+          // User closed the Razorpay modal without paying — cancel the order and release stock
+          try {
+            await axios.post(
+              serverUrl + "/api/order/cancelrazorpay",
+              { razorpay_order_id: order.id },
+              { withCredentials: true }
+            );
+            toast.info("Payment cancelled. Your order has been removed.");
+          } catch (err) {
+            console.error("Cancel order error:", err);
+          }
+          // Regenerate the idempotency key so the user can place a new order
+          idempotencyKeyRef.current = crypto.randomUUID();
+          setIsLoading(false);
+        },
       },
       prefill: {
         name: formdata.firstname + " " + formdata.lastname,
@@ -106,7 +128,7 @@ const PlaceOrder = () => {
         const response = await axios.post(
           serverUrl + "/api/order/placeorder",
           orderData,
-          { withCredentials: true }
+          { withCredentials: true, headers: { "Idempotency-Key": idempotencyKeyRef.current } }
         );
         if (response.data.failedItems && response.data.failedItems.length > 0) {
           toast.warn(response.data.message);
@@ -115,6 +137,8 @@ const PlaceOrder = () => {
         }
         setcartItem({});
         setIsLoading(false);
+        // Regenerate key after successful order so the next order gets a fresh key
+        idempotencyKeyRef.current = crypto.randomUUID();
         navigate("/order");
       } catch (err) {
         setIsLoading(false);
@@ -144,7 +168,7 @@ const PlaceOrder = () => {
         const res = await axios.post(
           serverUrl + "/api/order/razorpay",
           orderData,
-          { withCredentials: true }
+          { withCredentials: true, headers: { "Idempotency-Key": idempotencyKeyRef.current } }
         );
         if (res.data.failedItems && res.data.failedItems.length > 0) {
           const failedNames = res.data.failedItems.map(i => `${i.name} (Size: ${i.size})`).join(', ');

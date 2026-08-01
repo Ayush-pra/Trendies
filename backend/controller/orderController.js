@@ -96,6 +96,7 @@ const placeOrderRazorpay = async (req, res) => {
             address,
             paymentMethod: 'Razorpay',
             payment: false,
+            status: 'Pending Payment',
             date: Date.now()
         }
         const newOrder = new Order(orderData);
@@ -129,7 +130,7 @@ const verifyRazorpay = async (req, res) => {
         const { razorpay_order_id } = req.body
         const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id)
         if (orderInfo.status === 'paid') {
-            await Order.findByIdAndUpdate(orderInfo.receipt, { payment: true })
+            await Order.findByIdAndUpdate(orderInfo.receipt, { payment: true, status: 'Orderd Placed' })
             await User.findByIdAndUpdate(userId, { cartData: {} })
             res.status(200).json({ message: 'Payment Successful' })
         }
@@ -176,7 +177,19 @@ const allOrders = async (req, res) => {
 const updateStatus = async (req, res) => {
     try {
         const { orderId, status } = req.body;
-        await Order.findByIdAndUpdate(orderId, { status });
+
+        const updateData = { status };
+
+        // For COD orders: when admin marks as "Delivered", the customer has paid cash
+        // so automatically set payment to true
+        if (status === 'Delivered') {
+            const order = await Order.findById(orderId);
+            if (order && order.paymentMethod === 'cod' && !order.payment) {
+                updateData.payment = true;
+            }
+        }
+
+        await Order.findByIdAndUpdate(orderId, updateData);
         return res.status(201).json({ message: "Status Updated" });
     }
     catch (error) {
@@ -185,6 +198,44 @@ const updateStatus = async (req, res) => {
     }
 }
 
-module.exports = { PlacedOrder, userOrders, allOrders, updateStatus, placeOrderRazorpay, verifyRazorpay };
+const cancelRazorpayOrder = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { razorpay_order_id } = req.body;
+
+        if (!razorpay_order_id) {
+            return res.status(400).json({ message: "Missing razorpay_order_id" });
+        }
+
+        // Fetch the Razorpay order to get our MongoDB order ID (receipt)
+        const razorpayOrder = await razorpayInstance.orders.fetch(razorpay_order_id);
+        const mongoOrderId = razorpayOrder.receipt;
+
+        if (!mongoOrderId) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        const order = await Order.findById(mongoOrderId);
+
+        // Only cancel if the order belongs to this user, is unpaid, and still pending
+        if (order && order.userId === userId && !order.payment && order.status === 'Pending Payment') {
+            // Release the reserved stock back to inventory
+            if (order.items && order.items.length > 0) {
+                await releaseStock(order.items);
+            }
+            await Order.findByIdAndUpdate(mongoOrderId, { status: 'Cancelled' });
+            console.log(`Order ${mongoOrderId} cancelled — user closed Razorpay modal`);
+            return res.status(200).json({ message: "Order cancelled" });
+        }
+
+        return res.status(200).json({ message: "No action needed" });
+    }
+    catch (error) {
+        console.error("cancelRazorpayOrder Error:", error);
+        return res.status(500).json({ message: "Cancel order error" });
+    }
+}
+
+module.exports = { PlacedOrder, userOrders, allOrders, updateStatus, placeOrderRazorpay, verifyRazorpay, cancelRazorpayOrder };
 
 
