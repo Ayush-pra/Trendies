@@ -18,7 +18,7 @@ const PlacedOrder = async (req, res) => {
 
         // Atomically reserve stock for all items
         const stockResult = await reserveStock(items);
-        
+
         if (!stockResult.success) {
             return res.status(409).json({
                 message: "All items in your order are out of stock.",
@@ -49,7 +49,7 @@ const PlacedOrder = async (req, res) => {
         await newOrder.save();
 
         await User.findByIdAndUpdate(userId, { cartData: {} });
-        
+
         let message = 'Order Placed';
         if (stockResult.failedItems.length > 0) {
             const failedNames = stockResult.failedItems.map(i => `${i.name} (Size: ${i.size})`).join(', ');
@@ -72,7 +72,7 @@ const placeOrderRazorpay = async (req, res) => {
 
         // Atomically reserve stock for all items
         const stockResult = await reserveStock(items);
-        
+
         if (!stockResult.success) {
             return res.status(409).json({
                 message: "All items in your order are out of stock.",
@@ -133,18 +133,18 @@ const verifyRazorpay = async (req, res) => {
             await User.findByIdAndUpdate(userId, { cartData: {} })
             res.status(200).json({ message: 'Payment Successful' })
         }
-        else{
+        else {
             // Payment failed — release the reserved stock
             const order = await Order.findById(orderInfo.receipt);
             if (order && order.items) {
                 await releaseStock(order.items);
             }
-            res.json({message:'Payment Failed'})
+            res.json({ message: 'Payment Failed' })
         }
     }
-    catch(error) {
+    catch (error) {
         console.error("verifyRazorpay Error:", error);
-        res.status(500).json({message:error.message})
+        res.status(500).json({ message: error.message })
     }
 }
 
@@ -185,6 +185,6 @@ const updateStatus = async (req, res) => {
     }
 }
 
-module.exports = { PlacedOrder, userOrders, allOrders, updateStatus, placeOrderRazorpay , verifyRazorpay };
+module.exports = { PlacedOrder, userOrders, allOrders, updateStatus, placeOrderRazorpay, verifyRazorpay };
 
 
