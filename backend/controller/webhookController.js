@@ -29,6 +29,9 @@ const razorpayWebhook = async (req, res) => {
 
         const event = req.body.event;
         const payload = req.body.payload;
+        
+        console.log("Raw Webhook Payload:", JSON.stringify(req.body, null, 2));
+        
         const receiptId = payload.payment?.entity?.notes?.receipt || payload.order?.entity?.receipt; 
         
         // Sometimes payload.order is not present in some events, checking notes just in case,
