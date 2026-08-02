@@ -1,17 +1,47 @@
-import React, { useContext } from 'react';
-import { shopDataContext } from '../context/ShopContext';
+import React, { useContext, useEffect, useState } from 'react';
+import { authDataContext } from '../context/AuthContext';
 import { wishlistDataContext } from '../context/WishlistContext';
 import { userDataContext } from '../context/UserContext';
 import Title from '../components/Title';
 import Card from '../components/Card';
 import { useNavigate } from 'react-router-dom';
 import { FaHeartBroken } from 'react-icons/fa';
+import axios from 'axios';
 
 const Wishlist = () => {
-  const { products, currency } = useContext(shopDataContext);
+  const { serverUrl } = useContext(authDataContext);
   const { wishlistIds, wishlistLoading } = useContext(wishlistDataContext);
   const { userData } = useContext(userDataContext);
   const navigate = useNavigate();
+  const [wishlistProducts, setWishlistProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(false);
+
+  // Fetch full product details for wishlisted IDs
+  useEffect(() => {
+    const fetchWishlistProducts = async () => {
+      const ids = Array.from(wishlistIds);
+      if (ids.length === 0) {
+        setWishlistProducts([]);
+        return;
+      }
+      try {
+        setProductsLoading(true);
+        const response = await axios.post(serverUrl + "/api/product/by-ids", { ids });
+        if (response.data.success) {
+          setWishlistProducts(response.data.products);
+        }
+      } catch (error) {
+        console.error("fetchWishlistProducts error:", error);
+        setWishlistProducts([]);
+      } finally {
+        setProductsLoading(false);
+      }
+    };
+
+    if (!wishlistLoading) {
+      fetchWishlistProducts();
+    }
+  }, [wishlistIds, wishlistLoading, serverUrl]);
 
   // If not logged in, redirect to login
   if (!userData) {
@@ -28,9 +58,6 @@ const Wishlist = () => {
     );
   }
 
-  // Cross-reference wishlist IDs with full product data
-  const wishlistProducts = products.filter(product => wishlistIds.has(product._id));
-
   return (
     <div className='w-full min-h-screen bg-gradient-to-l from-[#131212] to-[#081619] pt-[70px] px-5 py-8'>
       <div className='max-w-7xl mx-auto'>
@@ -43,7 +70,7 @@ const Wishlist = () => {
         </div>
 
         {/* Wishlist Content */}
-        {wishlistLoading ? (
+        {wishlistLoading || productsLoading ? (
           <div className='flex items-center justify-center py-20'>
             <div className='w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin'></div>
           </div>
