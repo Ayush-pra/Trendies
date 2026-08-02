@@ -38,9 +38,19 @@ const getOrderStatus = async (userId) => {
       year: "numeric",
     });
 
-    const message = `Your latest order (₹${latestOrder.amount}) placed on ${orderDate} is currently: **${latestOrder.status}**. ${
-      latestOrder.payment ? "Payment is confirmed. ✅" : "Payment is pending. ⏳"
-    }`;
+    const itemsList = latestOrder.items && Array.isArray(latestOrder.items)
+      ? latestOrder.items.map(i => i.name || "Item").join(", ")
+      : "your items";
+
+    let statusText = latestOrder.status;
+    // Resolve contradictory DB state if it says pending but payment is true
+    if (statusText === "Pending Payment" && latestOrder.payment) {
+        statusText = "Processing"; 
+    }
+
+    const paymentText = latestOrder.payment ? "Payment is confirmed. ✅" : "Payment is pending. ⏳";
+
+    const message = `Your recent order containing "${itemsList}" (₹${latestOrder.amount}) placed on ${orderDate} is currently: ${statusText}. ${paymentText}`;
 
     return { message, order: latestOrder };
   } catch (error) {
@@ -83,9 +93,14 @@ const getOrderHistory = async (userId) => {
           day: "numeric",
           month: "short",
         });
-        return `${i + 1}. ₹${o.amount} — ${o.status} (${date})`;
+        
+        const itemsList = o.items && Array.isArray(o.items)
+          ? o.items.map(item => item.name || "Item").join(", ")
+          : "Items";
+          
+        return `${i + 1}. ${itemsList}\n   ₹${o.amount} — ${o.status} (${date})`;
       })
-      .join("\n");
+      .join("\n\n");
 
     const message = `Here are your recent orders:\n\n${orderSummary}`;
 

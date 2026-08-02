@@ -33,17 +33,33 @@ const client = new OpenAI({
  * Send a chat completion request to OpenRouter.
  * Throws on failure so callers can handle SYSTEM_ERROR.
  */
-const chatCompletion = async (systemPrompt, userMessage) => {
-  const response = await client.chat.completions.create({
-    model: AI_MODEL,
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userMessage },
-    ],
-    temperature: 0.3,
-  });
+const chatCompletion = async (systemPrompt, userMessage, maxTokens = 500, expectJson = false) => {
+  try {
+    const options = {
+      model: AI_MODEL,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userMessage },
+      ],
+      temperature: 0.1, // Lower temperature for more deterministic routing
+      max_tokens: maxTokens,
+    };
 
-  return response.choices[0].message.content.trim();
+    if (expectJson) {
+      options.response_format = { type: "json_object" };
+    }
+
+    const response = await client.chat.completions.create(options);
+
+    if (!response || !response.choices || response.choices.length === 0) {
+      throw new Error("Invalid or empty response from AI provider.");
+    }
+
+    return response.choices[0].message.content.trim();
+  } catch (error) {
+    // Re-throw so chatService can catch and return the fallback message
+    throw new Error(error.message);
+  }
 };
 
 // ── Public API ──────────────────────────────────────────────────
@@ -58,7 +74,8 @@ const classifyIntent = async (message) => {
   console.log("OPENROUTER MODEL:", AI_MODEL);
   console.log("USER MESSAGE:", message);
 
-  const responseText = await chatCompletion(INTENT_CLASSIFICATION_PROMPT, message);
+  // Pass expectJson = true to strictly force JSON output
+  const responseText = await chatCompletion(INTENT_CLASSIFICATION_PROMPT, message, 500, true);
 
   console.log("RAW AI RESPONSE:", responseText);
 
